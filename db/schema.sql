@@ -48,3 +48,18 @@ CREATE TABLE learning_completions (
 );
 
 CREATE INDEX idx_learning_user_completed ON learning_completions(user_id, completed_at);
+
+-- new patient table
+CREATE TABLE patients (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) UNIQUE,  -- ← unique constraint inline
+    name VARCHAR(255),
+    sex VARCHAR(50),
+    height_in DECIMAL(5,2),
+    weight_lbs DECIMAL(5,2),
+    date_of_birth DATE,
+    diseases TEXT[],
+    tobacco_vaping BOOLEAN DEFAULT false,
+    drinking_times_per_week INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
