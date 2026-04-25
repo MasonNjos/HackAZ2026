@@ -64,7 +64,7 @@ const CheckInDashboard = () => {
         <div className="ci-header-inner">
           <div>
             <h1>Saguaro Link</h1>
-            <p>Your Diabetes Management Portal</p>
+
           </div>
           {user && <span className="ci-welcome">Welcome, {user.given_name || user.name}</span>}
         </div>
