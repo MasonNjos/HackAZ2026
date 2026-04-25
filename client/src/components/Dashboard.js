@@ -2,75 +2,109 @@ import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
 
+
 const Dashboard = () => {
   const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Mock progress
     setProgress(60);
   }, []);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div style={{ textAlign: 'center', padding: '2rem', fontFamily: 'Arial, sans-serif' }}>Loading...</div>;
 
   return (
     <div className="dashboard">
+
+      {/* ── Header ── */}
       <header className="dashboard-header">
-        <h1>Health Credits Platform</h1>
-        {!isAuthenticated ? (
-          <div className="auth-actions">
-            <button className="btn-primary" onClick={() => loginWithRedirect({
-              appState: {
-                returnTo: window.location.pathname
-              }
-            })}>
-              Log In
-            </button>
-            <Link to="/signup" className="btn-secondary">
-              Sign Up
-            </Link>
-          </div>
-        ) : (
+        <div className="header-inner">
           <div>
-            <p>Welcome, {user.name}!</p>
-            <button className="btn-secondary" onClick={() => logout({
-              logoutParams: {
-                returnTo: window.location.origin
-              }
-            })}>
-              Log Out
-            </button>
+            <h1>Saguaro Link</h1>
+        
           </div>
-        )}
+
+          {!isAuthenticated ? (
+            <div className="auth-actions">
+              <button
+                className="btn-primary"
+                onClick={() => loginWithRedirect({ appState: { returnTo: window.location.pathname } })}
+              >
+                Log In
+              </button>
+              <Link to="/signup" className="btn-secondary">
+                Sign Up
+              </Link>
+            </div>
+          ) : (
+            <div className="user-actions">
+              <p className="welcome-text">Welcome, {user.name}!</p>
+              <button
+                className="btn-secondary"
+                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+              >
+                Log Out
+              </button>
+            </div>
+          )}
+        </div>
       </header>
 
+      {/* ── Unauthenticated hero ── */}
+      {!isAuthenticated && (
+        <div className="hero-section">
+          <h2>Manage your diabetes. Earn health credits.</h2>
+          <p>Log your glucose, complete daily check-ins, and access educational modules — all in one place.</p>
+          <button
+            className="btn-primary btn-large"
+            onClick={() => loginWithRedirect({ appState: { returnTo: window.location.pathname } })}
+          >
+            Get Started
+          </button>
+        </div>
+      )}
+
+      {/* ── Authenticated main content ── */}
       {isAuthenticated && (
         <main className="dashboard-main">
+
+          {/* Progress */}
           <section className="progress-section">
             <h2>Health Credits Progress</h2>
             <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+              <div className="progress-fill" style={{ width: `${progress}%` }} />
             </div>
             <p>{progress}% towards next reward</p>
           </section>
 
+          {/* Cards */}
           <section className="sections">
+
             <div className="section-card">
+              <div className="card-icon card-icon--blue">📊</div>
               <h3>My Glucose Log</h3>
               <p>Track your daily blood sugar levels</p>
               <Link to="/checkin" className="btn-primary">Log Today</Link>
             </div>
+
             <div className="section-card">
+              <div className="card-icon card-icon--green">📚</div>
               <h3>Health Learning</h3>
               <p>Access educational modules</p>
-              <button className="btn-primary" disabled>Coming Soon</button>
+              <button className="btn-primary btn-disabled" disabled>Coming Soon</button>
             </div>
-            <div className="section-card">
-              <h3>My Wallet</h3>
-              <p>View and redeem your Solana credits</p>
-              <Link to="/credits" className="btn-primary">View Credits</Link>
-            </div>
+
           </section>
+
+          {/* Daily tip */}
+          <div className="tip-box">
+            <span className="tip-icon">ℹ️</span>
+            <div>
+              <strong>Daily Tip</strong>
+              <p>Log your glucose at least 3 times a day to track patterns and maintain better health.</p>
+            </div>
+          </div>
+
         </main>
       )}
     </div>
