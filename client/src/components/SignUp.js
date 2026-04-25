@@ -6,12 +6,7 @@ import { Link } from 'react-router-dom';
 import './signup.css';
 
 const SignUp = () => {
-  const { loginWithRedirect } = useAuth0();
-  const [formData, setFormData] = useState({
-    email: '',
-    fullName: '',
-    password: ''
-  });
+  const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
   const [status, setStatus] = useState(null);
   const [isError, setIsError] = useState(false);
 
@@ -47,6 +42,27 @@ const SignUp = () => {
       setStatus(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
     }
   };
+
+  useEffect(() => {
+    const domain = process.env.REACT_APP_AUTH0_DOMAIN;
+    const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
+    if (!domain || !clientId) {
+      setStatus('Missing Auth0 config. Set REACT_APP_AUTH0_DOMAIN and REACT_APP_AUTH0_CLIENT_ID in client/.env.');
+      return;
+    }
+
+    if (!isLoading && !isAuthenticated && !started) {
+      setStarted(true);
+      loginWithRedirect({
+        authorizationParams: { screen_hint: 'signup' },
+        appState: { returnTo: '/' },
+      }).catch((e) => {
+        console.error(e);
+        setStarted(false);
+        setStatus('Unable to start signup. Please check your Auth0 settings.');
+      });
+    }
+  }, [isAuthenticated, isLoading, loginWithRedirect, started]);
 
   return (
     <div className="signup-page">
