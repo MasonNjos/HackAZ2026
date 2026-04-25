@@ -4,201 +4,196 @@ import './Checkin.css';
 
 const MOODS = ['Great', 'Good', 'Okay', 'Not great', 'Poor'];
 
-const getReadingStatus = (value) => {
-  if (value < 70) return { label: 'Low', className: 'reading--low' };
-  if (value <= 140) return { label: 'Normal', className: 'reading--normal' };
-  return { label: 'High', className: 'reading--high' };
-};
-
-const formatTime = (date) =>
-  date.toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
-
 const CheckInDashboard = () => {
   const { user } = useAuth0();
 
-  // ── Daily Check-In state ──
-  const [mood, setMood] = useState('');
-  const [exercised, setExercised] = useState(false);
-  const [tookMedication, setTookMedication] = useState(false);
-  const [notes, setNotes] = useState('');
-  const [checkInSaved, setCheckInSaved] = useState(false);
+  const [form, setForm] = useState({
+    mood: '',
+    // Activity
+    hasActivity: false,
+    activityDetails: '',
+    // Symptoms (Now a text-based reveal)
+    hasSymptoms: false,
+    symptomsText: '',
+    // Vitals
+    systolic: '',
+    diastolic: '',
+    glucose: '',
+    notes: ''
+  });
 
-  // ── Glucose state ──
-  const [glucoseInput, setGlucoseInput] = useState('');
-  const [readings, setReadings] = useState([
-    { id: 1, value: 110, date: new Date(Date.now() - 1000 * 60 * 60 * 2) },
-    { id: 2, value: 145, date: new Date(Date.now() - 1000 * 60 * 60 * 18) },
-    { id: 3, value: 98,  date: new Date(Date.now() - 1000 * 60 * 60 * 20) },
-  ]);
-  const [glucoseError, setGlucoseError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const handleCheckIn = (e) => {
-    e.preventDefault();
-    setCheckInSaved(true);
-    setTimeout(() => setCheckInSaved(false), 3000);
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm(prev => {
+      const newState = { ...prev, [name]: type === 'checkbox' ? checked : value };
+      
+      // Auto-reset values if the user unchecks the "has" box
+      if (name === 'hasActivity' && !checked) newState.activityDetails = '';
+      if (name === 'hasSymptoms' && !checked) newState.symptomsText = '';
+      
+      return newState;
+    });
   };
 
-  const handleAddReading = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const val = parseInt(glucoseInput, 10);
-    if (!glucoseInput || isNaN(val) || val < 20 || val > 600) {
-      setGlucoseError('Please enter a valid glucose reading (20–600 mg/dL).');
-      return;
-    }
-    setGlucoseError('');
-    setReadings([{ id: Date.now(), value: val, date: new Date() }, ...readings]);
-    setGlucoseInput('');
+    setSubmitting(true);
+
+    const outputJSON = {
+      check_in: {
+        user_id: user?.sub,
+        timestamp: new Date().toISOString(),
+        mood: form.mood,
+        activity: {
+          did_exercise: form.hasActivity,
+          details: form.activityDetails || "None"
+        },
+        health_metrics: {
+          symptoms: form.hasSymptoms ? form.symptomsText : "None reported",
+          blood_pressure: {
+            systolic: parseInt(form.systolic) || null,
+            diastolic: parseInt(form.diastolic) || null
+          },
+          glucose_mgdl: parseInt(form.glucose) || null
+        },
+        notes: form.notes
+      }
+    };
+
+    console.log('Sending Check-In Data:', JSON.stringify(outputJSON, null, 2));
+    
+    // Simulate API submission
+    setTimeout(() => {
+      setSubmitting(false);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    }, 800);
   };
 
   return (
     <div className="ci-page">
-
-      {/* ── Header ── */}
       <header className="ci-header">
         <div className="ci-header-inner">
           <div>
             <h1>Saguaro Link</h1>
-
+            <p>Daily Health Monitor</p>
           </div>
           {user && <span className="ci-welcome">Welcome, {user.given_name || user.name}</span>}
         </div>
       </header>
 
       <main className="ci-main">
-
-        {/* ── Daily Check-In ── */}
-        <section className="ci-card">
-          <h2 className="ci-card-title">Daily Check-In</h2>
-
-          <form onSubmit={handleCheckIn} className="ci-form">
-
+        <form onSubmit={handleSubmit} className="ci-form">
+          
+          {/* MOOD SECTION */}
+          <section className="ci-card">
+            <h2 className="ci-card-title">General Wellbeing</h2>
             <div className="ci-field">
-              <label htmlFor="mood">How are you feeling today?</label>
-              <select
-                id="mood"
-                value={mood}
-                onChange={(e) => setMood(e.target.value)}
-                required
-              >
-                <option value="" disabled>Select your mood</option>
-                {MOODS.map((m) => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
+              <label>How are you feeling today?</label>
+              <select name="mood" value={form.mood} onChange={handleChange} required>
+                <option value="" disabled>Select mood...</option>
+                {MOODS.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
+          </section>
 
+          {/* ACTIVITY SECTION */}
+          <section className="ci-card">
+            <h2 className="ci-card-title">Daily Activity</h2>
             <div className="ci-checkbox-group">
               <label className="ci-checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={exercised}
-                  onChange={(e) => setExercised(e.target.checked)}
-                />
+                <input type="checkbox" name="hasActivity" checked={form.hasActivity} onChange={handleChange} />
                 <span className="ci-checkbox-box" />
-                I exercised today
+                I was physically active today
               </label>
             </div>
-
-            <div className="ci-checkbox-group">
-              <label className="ci-checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={tookMedication}
-                  onChange={(e) => setTookMedication(e.target.checked)}
+            {form.hasActivity && (
+              <div className="ci-field" style={{ marginTop: '1rem' }}>
+                <label>Details <span className="ci-optional">(e.g. 30 min walk)</span></label>
+                <input 
+                  type="text" 
+                  name="activityDetails" 
+                  value={form.activityDetails} 
+                  onChange={handleChange} 
+                  placeholder="What activity did you do?"
                 />
-                <span className="ci-checkbox-box" />
-                I took my medication
-              </label>
-            </div>
-
-            <div className="ci-field">
-              <label htmlFor="notes">Additional Notes <span className="ci-optional">(optional)</span></label>
-              <textarea
-                id="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Any symptoms, concerns, or observations..."
-                rows={4}
-              />
-            </div>
-
-            <button type="submit" className="ci-btn ci-btn--blue">
-              Save Check-In
-            </button>
-
-            {checkInSaved && (
-              <p className="ci-success">✓ Check-in saved successfully!</p>
+              </div>
             )}
-          </form>
-        </section>
+          </section>
 
-        {/* ── Log Glucose ── */}
-        <section className="ci-card">
-          <h2 className="ci-card-title">Log Glucose Reading</h2>
+          {/* SYMPTOMS SECTION (Converted to Text Input) */}
+          <section className="ci-card">
+            <h2 className="ci-card-title">Symptoms</h2>
+            <div className="ci-checkbox-group">
+              <label className="ci-checkbox-label">
+                <input type="checkbox" name="hasSymptoms" checked={form.hasSymptoms} onChange={handleChange} />
+                <span className="ci-checkbox-box" />
+                I am experiencing symptoms today
+              </label>
+            </div>
+            {form.hasSymptoms && (
+              <div className="ci-field" style={{ marginTop: '1rem' }}>
+                <label>Please describe your symptoms:</label>
+                <textarea 
+                  name="symptomsText" 
+                  value={form.symptomsText} 
+                  onChange={handleChange} 
+                  placeholder="e.g. Mild headache since morning, slight dizziness..."
+                  rows={3}
+                />
+              </div>
+            )}
+          </section>
 
-          <form onSubmit={handleAddReading} className="ci-form">
+          {/* VITALS SECTION */}
+          <section className="ci-card">
+            <h2 className="ci-card-title">Vitals & Readings</h2>
+            <div className="ci-fields">
+              <div className="ci-field">
+                <label>Blood Pressure (Systolic / Diastolic)</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <input name="systolic" type="number" placeholder="120" value={form.systolic} onChange={handleChange} />
+                  <input name="diastolic" type="number" placeholder="80" value={form.diastolic} onChange={handleChange} />
+                </div>
+              </div>
+              <div className="ci-field" style={{ marginTop: '1rem' }}>
+                <label>Blood Glucose (mg/dL)</label>
+                <input name="glucose" type="number" placeholder="100" value={form.glucose} onChange={handleChange} />
+              </div>
+            </div>
+          </section>
+
+          {/* NOTES SECTION */}
+          <section className="ci-card">
+            <h2 className="ci-card-title">Additional Notes</h2>
             <div className="ci-field">
-              <label htmlFor="glucose">Blood Glucose (mg/dL)</label>
-              <input
-                id="glucose"
-                type="number"
-                value={glucoseInput}
-                onChange={(e) => setGlucoseInput(e.target.value)}
-                placeholder="Enter reading"
-                min={20}
-                max={600}
+              <textarea 
+                name="notes" 
+                value={form.notes} 
+                onChange={handleChange} 
+                placeholder="Any other observations or concerns..." 
+                rows={3} 
               />
-              {glucoseError && <span className="ci-error">{glucoseError}</span>}
             </div>
+          </section>
 
-            <button type="submit" className="ci-btn ci-btn--green">
-              Add Reading
-            </button>
-          </form>
-        </section>
+          <button type="submit" className="ci-btn ci-btn--blue" disabled={submitting}>
+            {submitting ? 'Saving Check-In...' : 'Save Daily Check-In'}
+          </button>
 
-        {/* ── Recent Readings ── */}
-        <section className="ci-card">
-          <h2 className="ci-card-title">Recent Readings</h2>
+          {success && <p className="ci-success" style={{ textAlign: 'center' }}>✓ Check-in saved successfully!</p>}
+        </form>
 
-          {readings.length === 0 ? (
-            <p className="ci-empty">No readings yet. Add your first one above.</p>
-          ) : (
-            <div className="ci-readings">
-              {readings.map((r) => {
-                const status = getReadingStatus(r.value);
-                return (
-                  <div key={r.id} className={`ci-reading-row ${status.className}`}>
-                    <div className="ci-reading-value">
-                      <span className="ci-reading-number">{r.value}</span>
-                      <span className="ci-reading-unit">mg/dL</span>
-                    </div>
-                    <div className="ci-reading-meta">
-                      <span className="ci-reading-time">{formatTime(r.date)}</span>
-                      <span className="ci-reading-label">{status.label}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
-
-        {/* ── Daily Tip ── */}
         <div className="ci-tip">
           <span className="ci-tip-icon">ℹ</span>
           <div>
             <strong>Daily Tip</strong>
-            <p>Log your glucose at least 3 times a day to track patterns and maintain better health.</p>
+            <p>Recording your symptoms in detail helps your care provider understand triggers and patterns in your health.</p>
           </div>
         </div>
-
       </main>
     </div>
   );
