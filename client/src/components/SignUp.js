@@ -41,7 +41,8 @@ const SignUp = () => {
       });
     } catch (error) {
       console.error(error);
-      setStatus(error.response?.data?.description || 'Sign up failed. Check your Auth0 settings.');
+      const errorMessage = error.response?.data?.description || error.response?.data?.message || error.message || 'Sign up failed. Check your Auth0 settings.';
+      setStatus(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
     }
   };
 
