@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
 import './App.css';
 
@@ -8,29 +8,50 @@ import Dashboard from './components/Dashboard';
 import CheckInForm from './components/CheckInForm';
 import CreditsDashboard from './components/CreditsDashboard';
 import SignUp from './components/SignUp';
+import Login from './components/Login';
 
-function App() {
+const Auth0ProviderWithNavigate = ({ children }) => {
+  const navigate = useNavigate();
+
+  const onRedirectCallback = (appState) => {
+    navigate(appState?.returnTo || window.location.pathname);
+  };
+
+  const audience = process.env.REACT_APP_AUTH0_AUDIENCE;
+  const authorizationParams = {
+    // Auth0 compares callback URLs strictly; your dashboard uses a trailing slash.
+    redirect_uri: `${window.location.origin}/`,
+    scope: 'openid profile email',
+    ...(audience && audience !== 'your-api-audience' ? { audience } : {}),
+  };
+
   return (
     <Auth0Provider
       domain={process.env.REACT_APP_AUTH0_DOMAIN}
       clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
-      authorizationParams={{
-        redirect_uri: window.location.origin,
-        audience: process.env.REACT_APP_AUTH0_AUDIENCE,
-        scope: "openid profile email"
-      }}
+      authorizationParams={authorizationParams}
+      onRedirectCallback={onRedirectCallback}
     >
-      <Router>
+      {children}
+    </Auth0Provider>
+  );
+};
+
+function App() {
+  return (
+    <Router>
+      <Auth0ProviderWithNavigate>
         <div className="App">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/checkin" element={<CheckInForm />} />
             <Route path="/credits" element={<CreditsDashboard />} />
             <Route path="/signup" element={<SignUp />} />
           </Routes>
         </div>
-      </Router>
-    </Auth0Provider>
+      </Auth0ProviderWithNavigate>
+    </Router>
   );
 }
 

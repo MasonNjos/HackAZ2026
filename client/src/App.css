@@ -242,7 +242,36 @@ body {
   margin: 0;
 }
 
+.secondary-note {
+  font-size: 0.95rem;
+  color: #1F2937;
+  margin-top: 0.5rem;
+}
 
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.stat-label {
+  font-size: 0.95rem;
+  color: #444;
+}
 
 @media (min-width: 768px) {
   .sections {

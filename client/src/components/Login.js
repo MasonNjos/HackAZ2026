@@ -4,25 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
 
-const SignUp = () => {
+const Login = () => {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
   const [status, setStatus] = useState(null);
   const [started, setStarted] = useState(false);
 
-  const handleContinue = async () => {
-    setStatus(null);
-    try {
-      await loginWithRedirect({
-        authorizationParams: {
-          screen_hint: 'signup',
-        },
-        appState: { returnTo: '/' },
-      });
-    } catch (e) {
-      console.error(e);
-      setStatus('Unable to start signup. Please check your Auth0 settings.');
+  useEffect(() => {
+    // If user manually visits /login while already logged in, send them home.
+    if (!isLoading && isAuthenticated) {
+      window.location.href = '/';
     }
-  };
+  }, [isAuthenticated, isLoading]);
 
   useEffect(() => {
     const domain = process.env.REACT_APP_AUTH0_DOMAIN;
@@ -34,37 +26,51 @@ const SignUp = () => {
 
     if (!isLoading && !isAuthenticated && !started) {
       setStarted(true);
-      loginWithRedirect({
-        authorizationParams: { screen_hint: 'signup' },
-        appState: { returnTo: '/' },
-      }).catch((e) => {
+      loginWithRedirect({ appState: { returnTo: '/' } }).catch((e) => {
         console.error(e);
         setStarted(false);
-        setStatus('Unable to start signup. Please check your Auth0 settings.');
+        setStatus('Unable to start login. Please check your Auth0 settings.');
       });
     }
   }, [isAuthenticated, isLoading, loginWithRedirect, started]);
 
+  const handleContinue = async () => {
+    setStatus(null);
+    try {
+      await loginWithRedirect({
+        appState: { returnTo: '/' },
+      });
+    } catch (e) {
+      console.error(e);
+      setStatus('Unable to start login. Please check your Auth0 settings.');
+    }
+  };
+
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <h1>Create an Account</h1>
+        <h1>Log In</h1>
       </header>
 
       <main className="dashboard-main">
         <p>Redirecting you to Auth0…</p>
 
-        <button type="button" className="btn-primary" onClick={handleContinue}>
+        <button
+          type="button"
+          className={`btn-primary ${isLoading ? 'btn-disabled' : ''}`}
+          onClick={handleContinue}
+          disabled={isLoading}
+        >
           Continue manually
         </button>
 
-        {status && <p style={{ marginTop: '1rem' }}>{status}</p>}
         <p style={{ marginTop: '1rem' }}>
-          Already have an account? <Link to="/login">Log in</Link>
+          Don&apos;t have an account? <Link to="/signup">Sign up</Link>
         </p>
+        {status && <p style={{ marginTop: '1rem' }}>{status}</p>}
       </main>
     </div>
   );
 };
 
-export default SignUp;
+export default Login;
