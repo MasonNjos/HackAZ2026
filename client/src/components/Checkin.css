@@ -1,0 +1,342 @@
+/* checkin.css — Saguaro Link Check-In Dashboard */
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Page ── */
+.ci-page {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  color: #000;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── Header ── */
+.ci-header {
+  background: linear-gradient(135deg, #3B82C4 0%, #2563A8 100%);
+  color: #fff;
+  padding: 1.25rem 1.5rem;
+}
+
+.ci-header-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ci-header h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.ci-header p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-top: 0.15rem;
+}
+
+.ci-welcome {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+/* ── Main ── */
+.ci-main {
+  max-width: 680px;
+  margin: 1.75rem auto;
+  padding: 0 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Cards ── */
+.ci-card {
+  background: #fff;
+  border: 2px solid #000;
+  padding: 1.5rem 1.75rem;
+}
+
+.ci-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1.5px solid #e0e0e0;
+}
+
+/* ── Form elements ── */
+.ci-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.ci-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ci-field label {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.ci-optional {
+  font-weight: 400;
+  color: #666;
+  font-size: 0.88rem;
+}
+
+.ci-field select,
+.ci-field input[type="number"],
+.ci-field textarea {
+  padding: 0.65rem 0.85rem;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+  border: 2px solid #000;
+  background: #fff;
+  color: #000;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  resize: vertical;
+}
+
+.ci-field select:focus,
+.ci-field input:focus,
+.ci-field textarea:focus {
+  border-color: #3B82C4;
+  box-shadow: 0 0 0 3px rgba(59, 130, 196, 0.15);
+}
+
+.ci-field textarea::placeholder,
+.ci-field input::placeholder {
+  color: #aaa;
+}
+
+/* ── Checkboxes ── */
+.ci-checkbox-group {
+  border: 2px solid #e0e0e0;
+  border-radius: 0;
+  padding: 0.85rem 1rem;
+  background: #fafafa;
+}
+
+.ci-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  user-select: none;
+}
+
+/* Hide native checkbox */
+.ci-checkbox-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Custom checkbox box */
+.ci-checkbox-box {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border: 2px solid #000;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  position: relative;
+}
+
+.ci-checkbox-label input[type="checkbox"]:checked + .ci-checkbox-box {
+  background: #000;
+}
+
+.ci-checkbox-label input[type="checkbox"]:checked + .ci-checkbox-box::after {
+  content: '';
+  width: 5px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translateY(-1px);
+  display: block;
+}
+
+/* ── Buttons ── */
+.ci-btn {
+  padding: 1rem;
+  font-size: 1.05rem;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  min-height: 52px;
+  color: #fff;
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: 0.01em;
+}
+
+.ci-btn:hover { opacity: 0.88; }
+.ci-btn:active { transform: scale(0.99); }
+
+.ci-btn--blue  { background: #3B82C4; }
+.ci-btn--green { background: #3BB87A; }
+
+/* ── Status messages ── */
+.ci-success {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a5c3a;
+  background: #E6F7EF;
+  border: 2px solid #3BB87A;
+  padding: 0.7rem 1rem;
+}
+
+.ci-error {
+  font-size: 0.85rem;
+  color: #7a1f1f;
+  background: #FEF2F2;
+  border: 2px solid #E24B4A;
+  padding: 0.5rem 0.75rem;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.ci-empty {
+  color: #666;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+}
+
+/* ── Recent Readings ── */
+.ci-readings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ci-reading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.1rem;
+  border-radius: 0;
+}
+
+/* Normal = green */
+.reading--normal {
+  background: #d4edda;
+  border-left: 4px solid #3BB87A;
+}
+
+/* High = amber/yellow */
+.reading--high {
+  background: #fff3cd;
+  border-left: 4px solid #e6a817;
+}
+
+/* Low = red/pink */
+.reading--low {
+  background: #fde8e8;
+  border-left: 4px solid #E24B4A;
+}
+
+.ci-reading-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.ci-reading-number {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.reading--normal .ci-reading-number { color: #1a5c3a; }
+.reading--high   .ci-reading-number { color: #7a4f00; }
+.reading--low    .ci-reading-number { color: #7a1f1f; }
+
+.ci-reading-unit {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.ci-reading-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+}
+
+.ci-reading-time {
+  font-size: 0.82rem;
+  color: #555;
+}
+
+.ci-reading-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.reading--normal .ci-reading-label { color: #1a5c3a; }
+.reading--high   .ci-reading-label { color: #7a4f00; }
+.reading--low    .ci-reading-label { color: #7a1f1f; }
+
+/* ── Daily Tip ── */
+.ci-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: #E6F7EF;
+  border: 2px solid #3BB87A;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+}
+
+.ci-tip-icon {
+  font-size: 1.1rem;
+  color: #3BB87A;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.ci-tip strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.ci-tip p {
+  color: #333;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .ci-card { padding: 1.1rem 1rem; }
+  .ci-card-title { font-size: 1.1rem; }
+  .ci-reading-number { font-size: 1.3rem; }
+  .ci-btn { font-size: 1rem; }
+}

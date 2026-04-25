@@ -8,6 +8,7 @@ import Dashboard from './components/Dashboard';
 import CheckInForm from './components/CheckInForm';
 import CreditsDashboard from './components/CreditsDashboard';
 import SignUp from './components/SignUp';
+import CheckInDashboard from './components/Checkin';
 
 function App() {
   return (
@@ -24,9 +25,9 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/checkin" element={<CheckInForm />} />
             <Route path="/credits" element={<CreditsDashboard />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/checkin" element={<CheckInDashboard />} />
           </Routes>
         </div>
       </Router>
