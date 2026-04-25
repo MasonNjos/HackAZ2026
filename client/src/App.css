@@ -38,6 +38,20 @@ body {
   margin-bottom: 1rem;
 }
 
+.auth-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+@media (min-width: 480px) {
+  .auth-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
 .btn-primary, .btn-secondary {
   background-color: #000000;
   color: #ffffff;

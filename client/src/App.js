@@ -7,6 +7,7 @@ import './App.css';
 import Dashboard from './components/Dashboard';
 import CheckInForm from './components/CheckInForm';
 import CreditsDashboard from './components/CreditsDashboard';
+import SignUp from './components/SignUp';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/checkin" element={<CheckInForm />} />
             <Route path="/credits" element={<CreditsDashboard />} />
+            <Route path="/signup" element={<SignUp />} />
           </Routes>
         </div>
       </Router>
