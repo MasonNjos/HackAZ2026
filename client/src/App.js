@@ -10,6 +10,21 @@ import CreditsDashboard from './components/CreditsDashboard';
 import SignUp from './components/SignUp';
 import CheckInDashboard from './components/Checkin';
 
+const Auth0ProviderWithNavigate = ({ children }) => {
+  const navigate = useNavigate();
+
+  const onRedirectCallback = (appState) => {
+    navigate(appState?.returnTo || window.location.pathname);
+  };
+
+  const audience = process.env.REACT_APP_AUTH0_AUDIENCE;
+  const authorizationParams = {
+    // Auth0 compares callback URLs strictly; your dashboard uses a trailing slash.
+    redirect_uri: `${window.location.origin}/`,
+    scope: 'openid profile email',
+    ...(audience && audience !== 'your-api-audience' ? { audience } : {}),
+  };
+
   return (
     <Auth0Provider
       domain={process.env.REACT_APP_AUTH0_DOMAIN}

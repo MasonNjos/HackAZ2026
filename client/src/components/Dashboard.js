@@ -6,9 +6,14 @@ import { Link } from 'react-router-dom';
 const Dashboard = () => {
   const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
   const [progress, setProgress] = useState(0);
+  const [localUser, setLocalUser] = useState(null);
 
   useEffect(() => {
     setProgress(60);
+    const stored = localStorage.getItem('healthCreditsUser');
+    if (stored) {
+      setLocalUser(JSON.parse(stored));
+    }
   }, []);
 
   if (isLoading) return <div style={{ textAlign: 'center', padding: '2rem', fontFamily: 'Arial, sans-serif' }}>Loading...</div>;
@@ -24,24 +29,29 @@ const Dashboard = () => {
         
           </div>
 
-          {!isAuthenticated ? (
+          {!isAuthenticated && !localUser ? (
             <div className="auth-actions">
               <button
                 className="btn-primary"
                 onClick={() => loginWithRedirect({ appState: { returnTo: window.location.pathname } })}
               >
-                Log In
+                Get Started
               </button>
-              <Link to="/signup" className="btn-secondary">
-                Sign Up
-              </Link>
             </div>
           ) : (
             <div className="user-actions">
-              <p className="welcome-text">Welcome, {user.name}!</p>
+              <p className="welcome-text">Welcome, {user?.name || localUser?.email}!</p>
               <button
                 className="btn-secondary"
-                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                onClick={() => {
+                  localStorage.removeItem('healthCreditsUser');
+                  setLocalUser(null);
+                  if (isAuthenticated) {
+                    logout({ logoutParams: { returnTo: window.location.origin } });
+                  } else {
+                    window.location.reload();
+                  }
+                }}
               >
                 Log Out
               </button>
@@ -51,17 +61,14 @@ const Dashboard = () => {
       </header>
 
      {/* ── Unauthenticated hero ── */}
-{!isAuthenticated && (
+{!isAuthenticated && !localUser && (
   <div className="hero-section">
     <h2>Manage your diabetes. Earn health credits.</h2>
     <p>Log your glucose, complete daily check-ins, and access educational modules — all in one place.</p>
-    <Link to="/signup" className="btn-primary btn-large">
-      Get Started
-    </Link>
   </div>
 )}
       {/* ── Authenticated main content ── */}
-      {isAuthenticated && (
+      {(isAuthenticated || localUser) && (
         <main className="dashboard-main">
 
           {/* Progress */}
