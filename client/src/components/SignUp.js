@@ -1,12 +1,23 @@
 'use client';
-import React, { useState } from 'react';
+// 1. Added useEffect to the import
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Link } from 'react-router-dom';
 import './signup.css';
 
 const SignUp = () => {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+  
+  // 2. Define the missing formData state
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: ''
+  });
+
+  // 3. Define the missing 'started' state for the redirect logic
+  const [started, setStarted] = useState(false);
+  
   const [status, setStatus] = useState(null);
   const [isError, setIsError] = useState(false);
 
@@ -46,40 +57,40 @@ const SignUp = () => {
   useEffect(() => {
     const domain = process.env.REACT_APP_AUTH0_DOMAIN;
     const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
+    
     if (!domain || !clientId) {
       setStatus('Missing Auth0 config. Set REACT_APP_AUTH0_DOMAIN and REACT_APP_AUTH0_CLIENT_ID in client/.env.');
       return;
     }
 
+    // Logic to trigger Auth0 signup screen if needed
     if (!isLoading && !isAuthenticated && !started) {
       setStarted(true);
-      loginWithRedirect({
-        authorizationParams: { screen_hint: 'signup' },
-        appState: { returnTo: '/' },
-      }).catch((e) => {
-        console.error(e);
-        setStarted(false);
-        setStatus('Unable to start signup. Please check your Auth0 settings.');
-      });
+      // Optional: Logic to automatically redirect to Auth0 Signup page
+      // loginWithRedirect({
+      //   authorizationParams: { screen_hint: 'signup' },
+      //   appState: { returnTo: '/' },
+      // }).catch((e) => {
+      //   console.error(e);
+      //   setStarted(false);
+      //   setStatus('Unable to start signup. Please check your Auth0 settings.');
+      // });
     }
   }, [isAuthenticated, isLoading, loginWithRedirect, started]);
 
   return (
     <div className="signup-page">
-
       <header className="signup-header">
         <h1>Saguaro Link</h1>
         <p className="signup-header-subtitle">Your Diabetes Management Portal</p>
       </header>
 
       <main className="signup-main">
-
         <div className="signup-card">
           <h2 className="signup-title">Create an Account</h2>
           <p className="signup-desc">Join Saguaro Link to start tracking your blood glucose and earning health credits.</p>
 
           <form onSubmit={handleSubmit} className="signup-form">
-
             <div className="form-group">
               <label htmlFor="fullName">Full Name</label>
               <input
@@ -124,7 +135,6 @@ const SignUp = () => {
             <button type="submit" className="btn-primary btn-full">
               Sign Up
             </button>
-
           </form>
 
           {status && (
@@ -146,9 +156,6 @@ const SignUp = () => {
             </button>
           </p>
         </div>
-
-        
-
       </main>
     </div>
   );
