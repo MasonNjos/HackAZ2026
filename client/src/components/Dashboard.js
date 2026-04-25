@@ -18,13 +18,18 @@ const Dashboard = () => {
       <header className="dashboard-header">
         <h1>Health Credits Platform</h1>
         {!isAuthenticated ? (
-          <button className="btn-primary" onClick={() => loginWithRedirect({
-            appState: {
-              returnTo: window.location.pathname
-            }
-          })}>
-            Log In
-          </button>
+          <div className="auth-actions">
+            <button className="btn-primary" onClick={() => loginWithRedirect({
+              appState: {
+                returnTo: window.location.pathname
+              }
+            })}>
+              Log In
+            </button>
+            <Link to="/signup" className="btn-secondary">
+              Sign Up
+            </Link>
+          </div>
         ) : (
           <div>
             <p>Welcome, {user.name}!</p>
