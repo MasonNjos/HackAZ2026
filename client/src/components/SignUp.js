@@ -1,8 +1,9 @@
 'use client';
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
+import { Link } from 'react-router-dom';
+import './signup.css';
 
 const SignUp = () => {
   const { loginWithRedirect } = useAuth0();
@@ -12,6 +13,7 @@ const SignUp = () => {
     password: ''
   });
   const [status, setStatus] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,77 +22,117 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('Signing up...');
-
+    setIsError(false);
     try {
       const auth0Domain = process.env.REACT_APP_AUTH0_DOMAIN;
-      const response = await axios.post(`https://${auth0Domain}/dbconnections/signup`, {
+      await axios.post(`https://${auth0Domain}/dbconnections/signup`, {
         client_id: process.env.REACT_APP_AUTH0_CLIENT_ID,
         email: formData.email,
         password: formData.password,
         connection: process.env.REACT_APP_AUTH0_CONNECTION,
-        user_metadata: {
-          full_name: formData.fullName
-        }
+        user_metadata: { full_name: formData.fullName }
       });
-
-      setStatus('Sign up successful! Redirecting to login...');
+      setStatus('Account created! Redirecting to login...');
       await loginWithRedirect({
-        authorizationParams: {
-          login_hint: formData.email
-        }
+        authorizationParams: { login_hint: formData.email }
       });
     } catch (error) {
       console.error(error);
-      const errorMessage = error.response?.data?.description || error.response?.data?.message || error.message || 'Sign up failed. Check your Auth0 settings.';
+      setIsError(true);
+      const errorMessage =
+        error.response?.data?.description ||
+        error.response?.data?.message ||
+        error.message ||
+        'Sign up failed. Please check your details and try again.';
       setStatus(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
     }
   };
 
   return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <h1>Create an Account</h1>
+    <div className="signup-page">
+
+      <header className="signup-header">
+        <h1>Saguaro Link</h1>
+        <p className="signup-header-subtitle">Your Diabetes Management Portal</p>
       </header>
 
-      <main className="dashboard-main">
-        <form onSubmit={handleSubmit}>
-          <label>
-            Full Name
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-            />
-          </label>
+      <main className="signup-main">
 
-          <label>
-            Email
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </label>
+        <div className="signup-card">
+          <h2 className="signup-title">Create an Account</h2>
+          <p className="signup-desc">Join Saguaro Link to start tracking your blood glucose and earning health credits.</p>
 
-          <label>
-            Password
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              minLength={8}
-            />
-          </label>
+          <form onSubmit={handleSubmit} className="signup-form">
 
-          <button type="submit" className="btn-primary">Sign Up</button>
-        </form>
-        {status && <p style={{ marginTop: '1rem' }}>{status}</p>}
+            <div className="form-group">
+              <label htmlFor="fullName">Full Name</label>
+              <input
+                type="text"
+                id="fullName"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                placeholder="Maria Garcia"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="At least 8 characters"
+                required
+                minLength={8}
+              />
+              <span className="field-hint">Must be at least 8 characters and include a number.</span>
+            </div>
+
+            <button type="submit" className="btn-primary btn-full">
+              Sign Up
+            </button>
+
+          </form>
+
+          {status && (
+            <p className={`signup-status ${isError ? 'signup-status--error' : 'signup-status--success'}`}>
+              {status}
+            </p>
+          )}
+
+          <div className="signup-divider" />
+
+          <p className="signup-login-prompt">
+            Already have an account?{' '}
+            <button
+              type="button"
+              className="link-btn"
+              onClick={() => loginWithRedirect({ appState: { returnTo: '/' } })}
+            >
+              Please log in
+            </button>
+          </p>
+        </div>
+
+        
+
       </main>
     </div>
   );
