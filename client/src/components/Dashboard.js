@@ -50,20 +50,16 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* ── Unauthenticated hero ── */}
-      {!isAuthenticated && (
-        <div className="hero-section">
-          <h2>Manage your diabetes. Earn health credits.</h2>
-          <p>Log your glucose, complete daily check-ins, and access educational modules — all in one place.</p>
-          <button
-            className="btn-primary btn-large"
-            onClick={() => loginWithRedirect({ appState: { returnTo: window.location.pathname } })}
-          >
-            Get Started
-          </button>
-        </div>
-      )}
-
+     {/* ── Unauthenticated hero ── */}
+{!isAuthenticated && (
+  <div className="hero-section">
+    <h2>Manage your diabetes. Earn health credits.</h2>
+    <p>Log your glucose, complete daily check-ins, and access educational modules — all in one place.</p>
+    <Link to="/signup" className="btn-primary btn-large">
+      Get Started
+    </Link>
+  </div>
+)}
       {/* ── Authenticated main content ── */}
       {isAuthenticated && (
         <main className="dashboard-main">
@@ -112,3 +108,11 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+
+
+
+// TODO: Need to add at the bottom services it provides. 
+// 1.Need to get rid of the  grey box at the bottom with that black line
+// 2. Add different boxes with things that it provides

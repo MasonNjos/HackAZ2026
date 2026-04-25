@@ -1,35 +1,32 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
 require('dotenv').config();
-const { checkJwt } = require('./auth0');
+const { pool } = require('./db/pool');
+const { optionalAuth0 } = require('./middleware/auth0Optional');
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware
+const corsOrigin = process.env.CORS_ORIGIN;
 app.use(
-  cors({
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
+  cors(
+    corsOrigin
+      ? {
+          origin: corsOrigin.split(',').map((s) => s.trim()),
+          credentials: true,
+        }
+      : undefined
+  )
 );
 app.use(express.json());
+app.use(optionalAuth0());
 
-// PostgreSQL connection
-const pool = new Pool({
-    user: process.env.DB_USER || 'postgres',
-    host: process.env.DB_HOST || 'localhost',
-    database: process.env.DB_NAME || 'health_credits',
-    password: process.env.DB_PASSWORD || '',
-    port: process.env.DB_PORT || 5432,
-});
-
-// Test DB connection
-pool.on('connect', () => {
-    console.log('Connected to PostgreSQL');
-});
+// Ensure pool is initialized on startup
+pool
+  .query('SELECT 1')
+  .then(() => {})
+  .catch((err) => console.error('PostgreSQL connection error', err));
 
 // Routes
 app.get('/api/health', (req, res) => {
@@ -43,6 +40,10 @@ app.get('/api/private', checkJwt, (req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/checkins', require('./routes/checkins'));
+app.use('/api/credits', require('./routes/credits'));
+app.use('/api/events', require('./routes/events'));
+app.use('/api/redeem', require('./routes/redeem'));
+app.use('/api/insights', require('./routes/insights'));
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

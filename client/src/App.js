@@ -8,22 +8,7 @@ import Dashboard from './components/Dashboard';
 import CheckInForm from './components/CheckInForm';
 import CreditsDashboard from './components/CreditsDashboard';
 import SignUp from './components/SignUp';
-import Login from './components/Login';
-
-const Auth0ProviderWithNavigate = ({ children }) => {
-  const navigate = useNavigate();
-
-  const onRedirectCallback = (appState) => {
-    navigate(appState?.returnTo || window.location.pathname);
-  };
-
-  const audience = process.env.REACT_APP_AUTH0_AUDIENCE;
-  const authorizationParams = {
-    // Auth0 compares callback URLs strictly; your dashboard uses a trailing slash.
-    redirect_uri: `${window.location.origin}/`,
-    scope: 'openid profile email',
-    ...(audience && audience !== 'your-api-audience' ? { audience } : {}),
-  };
+import CheckInDashboard from './components/Checkin';
 
   return (
     <Auth0Provider
@@ -44,10 +29,9 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/checkin" element={<CheckInForm />} />
             <Route path="/credits" element={<CreditsDashboard />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/checkin" element={<CheckInDashboard />} />
           </Routes>
         </div>
       </Auth0ProviderWithNavigate>
