@@ -4,11 +4,11 @@ import { Auth0Provider } from '@auth0/auth0-react';
 import './App.css';
 
 // Components
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/LandingPage/Dashboard';
 import CheckInForm from './components/CheckInForm';
 import CreditsDashboard from './components/CreditsDashboard';
-import SignUp from './components/SignUp';
-import CheckInDashboard from './components/Checkin';
+import SignUp from './components/SignUp/SignUp';
+import CheckInDashboard from './components/Main_Dashboard/Checkin';
 
 function App() {
   return (
