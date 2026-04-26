@@ -4,11 +4,11 @@ import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 import './App.css';
 
 // Components
-import Dashboard from './components/Dashboard';
-import CheckInDashboard from './components/Checkin';
-import Onboarding from './components/Onboarding';
+import Dashboard from './components/Dashboard/Dashboard';
+import CheckInDashboard from './components/Checkin/Checkin';
+import Onboarding from './components/Onboarding/Onboarding';
 import Login from './components/Login';
-import DoctorChat from './components/DoctorChat'; // <── NEW IMPORT
+import DoctorChat from './components/DoctorChat/DoctorChat'; // <── NEW IMPORT
 
 // ─── THE GATEKEEPER ───
 const AuthGate = ({ children }) => {
