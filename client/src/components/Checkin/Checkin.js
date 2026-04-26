@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useLanguage } from '../../contexts/LanguageContext';
-import LanguageToggle from '../LanguageToggle/LanguageToggle';
+import { useNavigate } from 'react-router-dom';
 import './Checkin.css';
+import axios from 'axios';
 
 const MOODS = ['Great', 'Good', 'Okay', 'Not great', 'Poor'];
 
 const CheckInDashboard = () => {
   const { user } = useAuth0();
-  const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     mood: '',
@@ -44,36 +44,34 @@ const CheckInDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-
-    const outputJSON = {
-      check_in: {
-        user_id: user?.sub,
-        timestamp: new Date().toISOString(),
+  
+    try {
+      await axios.post('http://localhost:5000/api/checkins', {
+        blood_sugar: parseInt(form.glucose) || null,
+        insulin_taken: null,
+        medications_taken: null,
+        symptoms: form.hasSymptoms ? form.symptomsText : '',
         mood: form.mood,
-        activity: {
-          did_exercise: form.hasActivity,
-          details: form.activityDetails || "None"
-        },
-        health_metrics: {
-          symptoms: form.hasSymptoms ? form.symptomsText : "None reported",
-          blood_pressure: {
-            systolic: parseInt(form.systolic) || null,
-            diastolic: parseInt(form.diastolic) || null
-          },
-          glucose_mgdl: parseInt(form.glucose) || null
-        },
-        notes: form.notes
-      }
-    };
-
-    console.log('Sending Check-In Data:', JSON.stringify(outputJSON, null, 2));
-    
-    // Simulate API submission
-    setTimeout(() => {
+        systolic: parseInt(form.systolic) || null,
+        diastolic: parseInt(form.diastolic) || null,
+        activity_done: form.hasActivity,
+        activity_details: form.activityDetails || null,
+        notes: form.notes || null,
+      });
+  
       setSubmitting(false);
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    }, 800);
+    } catch (err) {
+      if (err.response?.status === 400) {
+        alert(err.response?.data?.error?.message || 'Please check your inputs.');
+      } else if (err.response?.status === 409) {
+        alert("You've already submitted a check-in for today.");
+      } else {
+        alert('Something went wrong. Please try again.');
+      }
+      console.error('Check-in error:', err.response?.data);
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -81,13 +79,10 @@ const CheckInDashboard = () => {
       <header className="ci-header">
         <div className="ci-header-inner">
           <div>
-            <h1>{t("Saguaro Link")}</h1>
-            <p>{t("Daily Health Monitor")}</p>
+            <h1>Saguaro Link</h1>
+            <p>Daily Health Monitor</p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <LanguageToggle />
-            {user && <span className="ci-welcome">{t("Welcome")}, {user.given_name || user.name}</span>}
-          </div>
+          {user && <span className="ci-welcome">Welcome, {user.given_name || user.name}</span>}
         </div>
       </header>
 
@@ -96,24 +91,24 @@ const CheckInDashboard = () => {
           
           {/* MOOD SECTION */}
           <section className="ci-card">
-            <h2 className="ci-card-title">{t("General Wellbeing")}</h2>
+            <h2 className="ci-card-title">General Wellbeing</h2>
             <div className="ci-field">
-              <label>{t("How are you feeling today?")}</label>
+              <label>How are you feeling today?</label>
               <select name="mood" value={form.mood} onChange={handleChange} required>
-                <option value="" disabled>{t("Select mood...")}</option>
-                {MOODS.map(m => <option key={m} value={m}>{t(m)}</option>)}
+                <option value="" disabled>Select mood...</option>
+                {MOODS.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
             </div>
           </section>
 
           {/* ACTIVITY SECTION */}
           <section className="ci-card">
-            <h2 className="ci-card-title">{t("Daily Activity")}</h2>
+            <h2 className="ci-card-title">Daily Activity</h2>
             <div className="ci-checkbox-group">
               <label className="ci-checkbox-label">
                 <input type="checkbox" name="hasActivity" checked={form.hasActivity} onChange={handleChange} />
                 <span className="ci-checkbox-box" />
-                {t("I was physically active today")}
+                I was physically active today
               </label>
             </div>
             {form.hasActivity && (
@@ -130,14 +125,14 @@ const CheckInDashboard = () => {
             )}
           </section>
 
-          {/* SYMPTOMS SECTION (Converted to Text Input) */}
+          {/* SYMPTOMS SECTION */}
           <section className="ci-card">
-            <h2 className="ci-card-title">{t("Symptoms")}</h2>
+            <h2 className="ci-card-title">Symptoms</h2>
             <div className="ci-checkbox-group">
               <label className="ci-checkbox-label">
                 <input type="checkbox" name="hasSymptoms" checked={form.hasSymptoms} onChange={handleChange} />
                 <span className="ci-checkbox-box" />
-                {t("I am experiencing symptoms today")}
+                I am experiencing symptoms today
               </label>
             </div>
             {form.hasSymptoms && (
@@ -156,7 +151,7 @@ const CheckInDashboard = () => {
 
           {/* VITALS SECTION */}
           <section className="ci-card">
-            <h2 className="ci-card-title">{t("Vitals & Readings")}</h2>
+            <h2 className="ci-card-title">Vitals & Readings</h2>
             <div className="ci-fields">
               <div className="ci-field">
                 <label>Blood Pressure (Systolic / Diastolic)</label>
@@ -166,15 +161,15 @@ const CheckInDashboard = () => {
                 </div>
               </div>
               <div className="ci-field" style={{ marginTop: '1rem' }}>
-                <label>Blood Glucose (mg/dL)</label>
-                <input name="glucose" type="number" placeholder="100" value={form.glucose} onChange={handleChange} />
+                <label>Blood Glucose (mg/dL) <span className="ci-req">*</span></label>
+                <input name="glucose" type="number" placeholder="100" value={form.glucose} onChange={handleChange} required min="20" max="600" />
               </div>
             </div>
           </section>
 
           {/* NOTES SECTION */}
           <section className="ci-card">
-            <h2 className="ci-card-title">{t("Additional Notes")}</h2>
+            <h2 className="ci-card-title">Additional Notes</h2>
             <div className="ci-field">
               <textarea 
                 name="notes" 
@@ -186,9 +181,19 @@ const CheckInDashboard = () => {
             </div>
           </section>
 
-          <button type="submit" className="ci-btn ci-btn--blue" disabled={submitting}>
-            {submitting ? 'Saving Check-In...' : t("Save Daily Check-In")}
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+            <button type="submit" className="ci-btn ci-btn--blue" disabled={submitting} style={{ flex: 1 }}>
+              {submitting ? 'Saving Check-In...' : 'Save Daily Check-In'}
+            </button>
+            <button
+              type="button"
+              className="ci-btn"
+              onClick={() => navigate('/')}
+              style={{ flex: 1 }}
+            >
+              Done
+            </button>
+          </div>
 
           {success && <p className="ci-success" style={{ textAlign: 'center' }}>✓ Check-in saved successfully!</p>}
         </form>
