@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 import './Checkin.css';
 import axios from 'axios';
 
@@ -7,6 +8,7 @@ const MOODS = ['Great', 'Good', 'Okay', 'Not great', 'Poor'];
 
 const CheckInDashboard = () => {
   const { user } = useAuth0();
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     mood: '',
@@ -59,9 +61,15 @@ const CheckInDashboard = () => {
   
       setSubmitting(false);
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      console.error('Check-in error:', err);
+      if (err.response?.status === 400) {
+        alert(err.response?.data?.error?.message || 'Please check your inputs.');
+      } else if (err.response?.status === 409) {
+        alert("You've already submitted a check-in for today.");
+      } else {
+        alert('Something went wrong. Please try again.');
+      }
+      console.error('Check-in error:', err.response?.data);
       setSubmitting(false);
     }
   };
@@ -117,7 +125,7 @@ const CheckInDashboard = () => {
             )}
           </section>
 
-          {/* SYMPTOMS SECTION (Converted to Text Input) */}
+          {/* SYMPTOMS SECTION */}
           <section className="ci-card">
             <h2 className="ci-card-title">Symptoms</h2>
             <div className="ci-checkbox-group">
@@ -153,8 +161,8 @@ const CheckInDashboard = () => {
                 </div>
               </div>
               <div className="ci-field" style={{ marginTop: '1rem' }}>
-                <label>Blood Glucose (mg/dL)</label>
-                <input name="glucose" type="number" placeholder="100" value={form.glucose} onChange={handleChange} />
+                <label>Blood Glucose (mg/dL) <span className="ci-req">*</span></label>
+                <input name="glucose" type="number" placeholder="100" value={form.glucose} onChange={handleChange} required min="20" max="600" />
               </div>
             </div>
           </section>
@@ -173,9 +181,19 @@ const CheckInDashboard = () => {
             </div>
           </section>
 
-          <button type="submit" className="ci-btn ci-btn--blue" disabled={submitting}>
-            {submitting ? 'Saving Check-In...' : 'Save Daily Check-In'}
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+            <button type="submit" className="ci-btn ci-btn--blue" disabled={submitting} style={{ flex: 1 }}>
+              {submitting ? 'Saving Check-In...' : 'Save Daily Check-In'}
+            </button>
+            <button
+              type="button"
+              className="ci-btn"
+              onClick={() => navigate('/')}
+              style={{ flex: 1 }}
+            >
+              Done
+            </button>
+          </div>
 
           {success && <p className="ci-success" style={{ textAlign: 'center' }}>✓ Check-in saved successfully!</p>}
         </form>
