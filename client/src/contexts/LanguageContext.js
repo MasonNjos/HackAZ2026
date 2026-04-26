@@ -77,7 +77,13 @@ const translations = {
     "To": "To",
     "From": "From",
     "Back": "Back",
-    "Go back": "Go back"
+    "Go back": "Go back",
+    "My History Logs": "My History Logs",
+    "No check-ins found. Start logging your daily health to see history here!": "No check-ins found. Start logging your daily health to see history here!",
+    "Blood Sugar": "Blood Sugar",
+    "Blood Pressure": "Blood Pressure",
+    "Loading history...": "Loading history...",
+    "Failed to load history logs.": "Failed to load history logs."
   },
   es: {
     "Saguaro Link": "Saguaro Link",
@@ -171,7 +177,13 @@ const translations = {
     "To": "Hacia",
     "From": "Desde",
     "Back": "Volver",
-    "Go back": "Regresar"
+    "Go back": "Regresar",
+    "My History Logs": "Mi Historial",
+    "No check-ins found. Start logging your daily health to see history here!": "No se encontraron registros. ¡Empieza a registrar tu salud diaria para ver tu historial aquí!",
+    "Blood Sugar": "Nivel de Azúcar",
+    "Blood Pressure": "Presión Arterial",
+    "Loading history...": "Cargando historial...",
+    "Failed to load history logs.": "Error al cargar el historial."
   }
 };
 
