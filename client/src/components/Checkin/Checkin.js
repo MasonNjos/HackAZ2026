@@ -57,15 +57,15 @@ const CheckInDashboard = () => {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
-    
+
     let currentFinalTranscript = transcript;
 
     recognition.onstart = () => setIsListening(true);
-    
+
     recognition.onresult = (event) => {
       let interimTranscript = '';
       let finalUpdate = '';
-      
+
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
           finalUpdate += event.results[i][0].transcript + ' ';
@@ -73,20 +73,20 @@ const CheckInDashboard = () => {
           interimTranscript += event.results[i][0].transcript;
         }
       }
-      
+
       if (finalUpdate) {
         currentFinalTranscript += finalUpdate;
       }
       setTranscript(currentFinalTranscript + interimTranscript);
     };
-    
+
     recognition.onerror = (event) => {
       console.error("Speech recognition error", event.error);
       setIsListening(false);
     };
-    
+
     recognition.onend = () => setIsListening(false);
-    
+
     recognition.start();
     window.recognitionInstance = recognition;
   };
@@ -109,7 +109,7 @@ const CheckInDashboard = () => {
     setSubmitting(true);
 
     try {
-      await axios.post('http://localhost:5000/api/checkins', {
+      await axios.post('http://localhost:5001/api/checkins', {
         blood_sugar: parseInt(form.glucose) || null,
         insulin_taken: null,
         medications_taken: null,
@@ -211,12 +211,12 @@ const CheckInDashboard = () => {
                   </button>
                 ))}
                 <button
-                   type="button"
-                   className={`ci-pic-btn ${!form.hasActivity ? 'selected' : ''}`}
-                   onClick={() => setForm(prev => ({ ...prev, hasActivity: false, activityDetails: '' }))}
+                  type="button"
+                  className={`ci-pic-btn ${!form.hasActivity ? 'selected' : ''}`}
+                  onClick={() => setForm(prev => ({ ...prev, hasActivity: false, activityDetails: '' }))}
                 >
-                   <span className="ci-pic-emoji">❌</span>
-                   <span className="ci-pic-label">{t("None")}</span>
+                  <span className="ci-pic-emoji">❌</span>
+                  <span className="ci-pic-label">{t("None")}</span>
                 </button>
               </div>
             ) : (
@@ -352,9 +352,9 @@ const CheckInDashboard = () => {
                   🎤 {t("Voice Input (Testing)")}
                   {isListening && <span style={{ color: 'red', fontSize: '0.8rem', animation: 'pulse 1.5s infinite' }}>● Recording...</span>}
                 </span>
-                <button 
-                  type="button" 
-                  onClick={toggleListening} 
+                <button
+                  type="button"
+                  onClick={toggleListening}
                   className={`ci-btn ${isListening ? 'ci-btn--red' : 'ci-btn--blue'}`}
                   style={{ padding: '0.4rem 0.8rem', width: 'auto', minHeight: 'auto', fontSize: '0.9rem' }}
                 >

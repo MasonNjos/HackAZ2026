@@ -93,15 +93,12 @@ router.post('/', async (req, res) => {
         );
 
         res.json({ checkin: result.rows[0], awarded_credits: creditAmount, streak: updatedStreak });
+
+        // Trigger AI analysis asynchronously (don't await so we don't block the response)
+        const { analyzePatientData } = require('../services/aiService');
+        analyzePatientData(userId).catch(e => console.error("AI Analysis failed:", e));
+
     } catch (err) {
-        if (err && err.code === '23505') {
-            return res.status(409).json({
-                error: {
-                    message: 'Check-in already exists for today',
-                    details: { constraint: err.constraint },
-                },
-            });
-        }
         console.error(err);
         res.status(500).json({ error: { message: 'Server error' } });
     }
