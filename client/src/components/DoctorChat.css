@@ -1,0 +1,160 @@
+/* ── DoctorChat.css ── */
+
+.chat-page {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  background: linear-gradient(135deg, #3B82C4 0%, #2563A8 100%);
+  color: #ffffff;
+  padding: 1rem 1.5rem;
+}
+
+.chat-header-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.chat-back-btn {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  border: 2px solid #fff;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+.chat-back-btn:hover {
+  background: #fff;
+  color: #2563A8;
+}
+
+.chat-dr-info h1 {
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.chat-dr-info p {
+  font-size: 0.85rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* ── Chat Window ── */
+.chat-container {
+  flex: 1;
+  max-width: 800px;
+  width: 100%;
+  margin: 1.5rem auto;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 2px solid #000;
+  overflow: hidden;
+}
+
+.chat-window {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #fafafa;
+}
+
+/* ── Message Bubbles ── */
+.message-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.message-wrapper.doctor {
+  justify-content: flex-start;
+}
+
+.message-wrapper.patient {
+  justify-content: flex-end;
+}
+
+.message-bubble {
+  max-width: 75%;
+  padding: 0.8rem 1rem;
+  border: 2px solid #000;
+  position: relative;
+}
+
+.doctor .message-bubble {
+  background: #E6F0F9; /* Light Saguaro Blue */
+  color: #000;
+}
+
+.patient .message-bubble {
+  background: #000;
+  color: #fff;
+}
+
+.message-text {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  display: block;
+  text-align: right;
+}
+
+/* ── Input Area ── */
+.chat-input-area {
+  display: flex;
+  padding: 1rem;
+  background: #fff;
+  border-top: 2px solid #000;
+  gap: 0.75rem;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 0.85rem;
+  border: 2px solid #000;
+  font-size: 1rem;
+  outline: none;
+}
+
+.chat-input-area input:focus {
+  border-color: #3B82C4;
+}
+
+.chat-send-btn {
+  background: #000;
+  color: #fff;
+  border: 2px solid #000;
+  padding: 0 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.chat-send-btn:hover {
+  background: #3BB87A; /* Green on hover to signify action */
+  border-color: #3BB87A;
+}
+
+@media (max-width: 600px) {
+  .chat-container {
+    margin: 0;
+    border-left: none;
+    border-right: none;
+    height: 100%;
+  }
+}
