@@ -33,7 +33,13 @@ const CheckInDashboard = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+<<<<<<< HEAD
   const [isPictureMode, setIsPictureMode] = useState(mode === 'images');
+=======
+  const [isPictureMode, setIsPictureMode] = useState(false);
+  const [aiInsight, setAiInsight] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+>>>>>>> 6dcda48f03215b7a98c9d19b2e1bccad15d05ef9
 
   // Microphone state
   const [isListening, setIsListening] = useState(false);
@@ -108,22 +114,36 @@ const CheckInDashboard = () => {
     e.preventDefault();
     setSubmitting(true);
 
+    const checkinPayload = {
+      blood_sugar: parseInt(form.glucose) || null,
+      insulin_taken: null,
+      medications_taken: null,
+      symptoms: form.hasSymptoms ? form.symptomsText : '',
+      mood: form.mood,
+      systolic: parseInt(form.systolic) || null,
+      diastolic: parseInt(form.diastolic) || null,
+      activity_done: form.hasActivity,
+      activity_details: form.activityDetails || null,
+      notes: form.notes || null,
+    };
+
     try {
-      await axios.post('http://localhost:5000/api/checkins', {
-        blood_sugar: parseInt(form.glucose) || null,
-        insulin_taken: null,
-        medications_taken: null,
-        symptoms: form.hasSymptoms ? form.symptomsText : '',
-        mood: form.mood,
-        systolic: parseInt(form.systolic) || null,
-        diastolic: parseInt(form.diastolic) || null,
-        activity_done: form.hasActivity,
-        activity_details: form.activityDetails || null,
-        notes: form.notes || null,
-      });
+      await axios.post('/api/checkins', checkinPayload); // relative URL leverages proxy
 
       setSubmitting(false);
       setSuccess(true);
+
+      // Call AI to analyze
+      setAiLoading(true);
+      try {
+        const aiRes = await axios.post('/api/ai/analyze', checkinPayload);
+        setAiInsight(aiRes.data.insight);
+      } catch (aiErr) {
+        console.error('AI Analysis Error:', aiErr);
+        setAiInsight(t('Could not generate AI insight at this time.'));
+      } finally {
+        setAiLoading(false);
+      }
     } catch (err) {
       if (err.response?.status === 400) {
         alert(err.response?.data?.error?.message || t('Please check your inputs.'));
@@ -392,6 +412,25 @@ const CheckInDashboard = () => {
           </div>
 
           {success && <p className="ci-success" style={{ textAlign: 'center' }}>{t("✓ Check-in saved successfully!")}</p>}
+
+          {/* AI Response Box */}
+          {(aiLoading || aiInsight) && (
+            <section className="ci-card" style={{ marginTop: '1rem', background: '#eaf4fc', borderColor: '#3B82C4' }}>
+              <h2 className="ci-card-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottomColor: '#b6d4fe' }}>
+                🤖 {t("Health Assistant Insight")}
+              </h2>
+              <div className="ci-field" style={{ padding: '0.5rem 0' }}>
+                {aiLoading ? (
+                  <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#555' }}>
+                    <span style={{ display: 'inline-block', animation: 'spin 2s linear infinite' }}>⏳</span>
+                    {t("Analyzing your daily check-in...")}
+                  </p>
+                ) : (
+                  <p style={{ fontSize: '1rem', lineHeight: '1.5' }}>{aiInsight}</p>
+                )}
+              </div>
+            </section>
+          )}
         </form>
 
         <div className="ci-tip">
