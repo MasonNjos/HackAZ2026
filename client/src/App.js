@@ -5,11 +5,10 @@ import './App.css';
 
 // Components
 import Dashboard from './components/Dashboard';
-import CreditsDashboard from './components/CreditsDashboard';
-import SignUp from './components/SignUp';
 import CheckInDashboard from './components/Checkin';
 import Onboarding from './components/Onboarding';
 import Login from './components/Login';
+import DoctorChat from './components/DoctorChat'; // <── NEW IMPORT
 
 // ─── THE GATEKEEPER ───
 const AuthGate = ({ children }) => {
@@ -21,15 +20,11 @@ const AuthGate = ({ children }) => {
     return <Navigate to="/login" />;
   }
 
-  // 1. Check account age (Timestamp Hack)
   const createdAt = new Date(user.updated_at || user.created_at).getTime();
   const now = new Date().getTime();
   const accountAgeInMinutes = (now - createdAt) / 1000 / 60;
-
-  // 2. Check if they just finished onboarding in this session
   const hasFinishedOnboarding = sessionStorage.getItem(`onboarded_${user?.sub}`);
 
-  // 3. Logic: If account is < 2 mins old AND they haven't finished the form yet
   const isNewUser = accountAgeInMinutes < 2 && !hasFinishedOnboarding;
 
   if (isNewUser) {
@@ -41,7 +36,6 @@ const AuthGate = ({ children }) => {
 
 const Auth0ProviderWithNavigate = ({ children }) => {
   const navigate = useNavigate();
-
   const onRedirectCallback = (appState) => {
     navigate(appState?.returnTo || window.location.pathname);
   };
@@ -68,13 +62,14 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
             <Route path="/onboarding" element={<Onboarding />} />
 
             {/* Protected Routes */}
             <Route path="/" element={<AuthGate><Dashboard /></AuthGate>} />
-            <Route path="/credits" element={<AuthGate><CreditsDashboard /></AuthGate>} />
             <Route path="/checkin" element={<AuthGate><CheckInDashboard /></AuthGate>} />
+            
+            {/* ─── NEW DOCTOR CHAT ROUTE ─── */}
+            <Route path="/chat" element={<AuthGate><DoctorChat /></AuthGate>} />
           </Routes>
         </div>
       </Auth0ProviderWithNavigate>

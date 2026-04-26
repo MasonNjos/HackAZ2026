@@ -7,7 +7,6 @@ const Dashboard = () => {
   const [localUser, setLocalUser] = useState(null);
 
   useEffect(() => {
-    // Check for local session if Auth0 isn't the only provider
     const stored = localStorage.getItem('healthCreditsUser');
     if (stored) {
       setLocalUser(JSON.parse(stored));
@@ -37,7 +36,7 @@ const Dashboard = () => {
             </div>
           ) : (
             <div className="user-actions">
-              <p className="welcome-text">Welcome, {user?.name || localUser?.email}!</p>
+              <p className="welcome-text">Welcome, {user?.given_name || user?.name || localUser?.email}!</p>
               <button
                 className="btn-secondary"
                 onClick={() => {
@@ -50,14 +49,14 @@ const Dashboard = () => {
                   }
                 }}
               >
-                Log Out
+                 Log Out
               </button>
             </div>
           )}
         </div>
       </header>
 
-      {/* ── Unauthenticated Hero (Broadened Scope) ── */}
+      {/* ── Unauthenticated Hero ── */}
       {!isAuthenticated && !localUser && (
         <div className="hero-section">
           <h2>Manage your health. Stay connected.</h2>
@@ -72,14 +71,37 @@ const Dashboard = () => {
           {/* Cards Area */}
           <section className="sections">
 
+            {/* CARD 1: DAILY CHECK-IN */}
             <div className="section-card">
               <div className="card-icon card-icon--blue">📊</div>
               <h3>Health Check-In</h3>
               <p>Record your vitals, symptoms, and daily activity.</p>
-              <Link to="/checkin" className="btn-primary">Daily Check-In</Link>
+              <Link to="/checkin" className="btn-primary">Log Today</Link>
             </div>
 
-            {/* Note: You can add other cards here later, like 'History' or 'Care Team' */}
+            {/* CARD 2: DOCTOR CHAT */}
+            <div className="section-card">
+              <div className="card-icon card-icon--green">💬</div>
+              <h3>Doctor Chat</h3>
+              <p>Directly message your care team with questions or concerns.</p>
+              <Link to="/chat" className="btn-primary">Open Chat</Link>
+            </div>
+
+            {/* CARD 3: LOG HISTORY */}
+            <div className="section-card">
+              <div className="card-icon card-icon--purple">📋</div>
+              <h3>My Logs</h3>
+              <p>Review your check-in history and track your health progress.</p>
+              <Link to="/history" className="btn-primary">View History</Link>
+            </div>
+
+            {/* CARD 4: REQUEST A RIDE */}
+            <div className="section-card">
+              <div className="card-icon card-icon--yellow">🚗</div>
+              <h3>Request a Ride</h3>
+              <p>Schedule or request transportation to your upcoming appointments.</p>
+              <Link to="/ride" className="btn-primary">Get a Ride</Link>
+            </div>
 
           </section>
 
@@ -88,7 +110,7 @@ const Dashboard = () => {
             <span className="tip-icon">ℹ️</span>
             <div>
               <strong>Proactive Care</strong>
-              <p>Logging your vitals daily helps Saguaro Link identify patterns and helps you manage your health more effectively.</p>
+              <p>Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.</p>
             </div>
           </div>
 
