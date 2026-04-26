@@ -9,6 +9,7 @@ import CheckInDashboard from './components/Checkin/Checkin';
 import Onboarding from './components/Onboarding/Onboarding';
 import Login from './components/Login';
 import DoctorChat from './components/DoctorChat/DoctorChat'; // <── NEW IMPORT
+import RequestRide from './components/RequestRide/RequestRide';
 import { LanguageProvider } from './contexts/LanguageContext';
 
 // ─── THE GATEKEEPER ───
@@ -72,6 +73,7 @@ function App() {
               
               {/* ─── NEW DOCTOR CHAT ROUTE ─── */}
               <Route path="/chat" element={<AuthGate><DoctorChat /></AuthGate>} />
+              <Route path="/ride" element={<AuthGate><RequestRide /></AuthGate>} />
             </Routes>
           </div>
         </Auth0ProviderWithNavigate>

@@ -72,7 +72,12 @@ const translations = {
     "Recording your symptoms in detail helps your care provider understand triggers and patterns in your health.": "Recording your symptoms in detail helps your care provider understand triggers and patterns in your health.",
     "Please check your inputs.": "Please check your inputs.",
     "You've already submitted a check-in for today.": "You've already submitted a check-in for today.",
-    "Something went wrong. Please try again.": "Something went wrong. Please try again."
+    "Something went wrong. Please try again.": "Something went wrong. Please try again.",
+    "Upcoming Rides": "Upcoming Rides",
+    "To": "To",
+    "From": "From",
+    "Back": "Back",
+    "Go back": "Go back"
   },
   es: {
     "Saguaro Link": "Saguaro Link",
@@ -143,7 +148,30 @@ const translations = {
     "Recording your symptoms in detail helps your care provider understand triggers and patterns in your health.": "Registrar tus síntomas en detalle ayuda a tu proveedor de salud a comprender los desencadenantes y patrones en tu salud.",
     "Please check your inputs.": "Por favor, verifica tus datos.",
     "You've already submitted a check-in for today.": "Ya has enviado un chequeo para hoy.",
-    "Something went wrong. Please try again.": "Algo salió mal. Por favor intenta de nuevo."
+    "Something went wrong. Please try again.": "Algo salió mal. Por favor intenta de nuevo.",
+    "Ride Details": "Detalles del Viaje",
+    "Pickup Location": "Lugar de Recogida",
+    "Enter pickup address": "Ingresa la dirección de recogida",
+    "Destination": "Destino",
+    "Enter destination address or clinic name": "Ingresa la dirección de destino o nombre de la clínica",
+    "Schedule": "Horario",
+    "Date": "Fecha",
+    "Time": "Hora",
+    "Accessibility & Notes": "Accesibilidad y Notas",
+    "I require a wheelchair-accessible vehicle": "Necesito un vehículo accesible para silla de ruedas",
+    "Reason for Visit / Additional Notes": "Motivo de la Visita / Notas Adicionales",
+    "e.g. Doctor's appointment, need assistance at door...": "ej. Cita médica, necesito asistencia en la puerta...",
+    "Requesting...": "Solicitando...",
+    "Request Ride": "Pedir Transporte",
+    "Cancel": "Cancelar",
+    "✓ Ride requested successfully!": "✓ ¡Transporte solicitado exitosamente!",
+    "Ride Information": "Información del Viaje",
+    "Please be ready 15 minutes before your scheduled pickup time. The driver will wait up to 5 minutes.": "Por favor, esté listo 15 minutos antes de su hora de recogida programada. El conductor esperará hasta 5 minutos.",
+    "Upcoming Rides": "Viajes Próximos",
+    "To": "Hacia",
+    "From": "Desde",
+    "Back": "Volver",
+    "Go back": "Regresar"
   }
 };
 
