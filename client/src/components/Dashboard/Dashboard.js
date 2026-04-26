@@ -120,7 +120,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <BannerResources title="Banner Health Resources" />
+          <BannerResources title={t("Banner Health Resources")} />
 
         </main>
       )}

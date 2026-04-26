@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const bannerResources = [
   {
@@ -23,12 +24,15 @@ const bannerResources = [
   },
 ];
 
-const BannerResources = ({ title = 'Explore Banner Health', compact = false }) => {
+const BannerResources = ({ title, compact = false }) => {
+  const { t } = useLanguage();
+  const displayTitle = title || t("Explore Banner Health");
+
   return (
     <section className={`banner-resources ${compact ? 'banner-resources--compact' : ''}`}>
       <div className="banner-resources__header">
-        <h3>{title}</h3>
-        <p>Quick links to services and patient tools from Banner Health.</p>
+        <h3>{t(displayTitle)}</h3>
+        <p>{t("Quick links to services and patient tools from Banner Health.")}</p>
       </div>
 
       <div className="banner-resources__grid">
@@ -40,9 +44,9 @@ const BannerResources = ({ title = 'Explore Banner Health', compact = false }) =
             target="_blank"
             rel="noreferrer"
           >
-            <span className="banner-resource-card__title">{resource.title}</span>
-            <span className="banner-resource-card__description">{resource.description}</span>
-            <span className="banner-resource-card__link">Open Banner Health</span>
+            <span className="banner-resource-card__title">{t(resource.title)}</span>
+            <span className="banner-resource-card__description">{t(resource.description)}</span>
+            <span className="banner-resource-card__link">{t("Open Banner Health")}</span>
           </a>
         ))}
       </div>

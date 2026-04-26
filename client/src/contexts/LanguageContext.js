@@ -39,7 +39,24 @@ const translations = {
     "Vitals & Readings": "Vitals & Readings",
     "Additional Notes": "Additional Notes",
     "Save Daily Check-In": "Save Daily Check-In",
-    "Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.": "Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively."
+    "Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.": "Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.",
+    "Log In": "Log In",
+    "Sign Up": "Sign Up",
+    "Take Control of Your Health": "Take Control of Your Health",
+    "Track your daily health, monitor symptoms, and share insights with your care team—all in one place. Join Saguaro Link today and start your journey towards better health management.": "Track your daily health, monitor symptoms, and share insights with your care team—all in one place. Join Saguaro Link today and start your journey towards better health management.",
+    "Get Started Today": "Get Started Today",
+    "Explore Banner Health": "Explore Banner Health",
+    "Banner Health Resources": "Banner Health Resources",
+    "Quick links to services and patient tools from Banner Health.": "Quick links to services and patient tools from Banner Health.",
+    "Banner Health Services": "Banner Health Services",
+    "Browse core care options like primary care, urgent care, imaging, surgery, and specialty medicine.": "Browse core care options like primary care, urgent care, imaging, surgery, and specialty medicine.",
+    "Patients & Visitors": "Patients & Visitors",
+    "Find patient tools such as billing, medical records, the Banner app, symptom checker, and more.": "Find patient tools such as billing, medical records, the Banner app, symptom checker, and more.",
+    "Patient Account": "Patient Account",
+    "Manage appointments, view records, message your care team, and request prescription renewals.": "Manage appointments, view records, message your care team, and request prescription renewals.",
+    "Health & Wellness": "Health & Wellness",
+    "Explore education, health checks, support groups, and prevention resources from Banner Health.": "Explore education, health checks, support groups, and prevention resources from Banner Health.",
+    "Open Banner Health": "Open Banner Health"
   },
   es: {
     "Saguaro Link": "Saguaro Link",
@@ -77,7 +94,24 @@ const translations = {
     "Vitals & Readings": "Signos Vitales",
     "Additional Notes": "Notas Adicionales",
     "Save Daily Check-In": "Guardar Chequeo Diario",
-    "Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.": "El seguimiento constante ayuda a identificar patrones y a manejar tu salud más eficazmente."
+    "Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.": "El seguimiento constante ayuda a identificar patrones y a manejar tu salud más eficazmente.",
+    "Log In": "Iniciar sesión",
+    "Sign Up": "Regístrate",
+    "Take Control of Your Health": "Toma Control de tu Salud",
+    "Track your daily health, monitor symptoms, and share insights with your care team—all in one place. Join Saguaro Link today and start your journey towards better health management.": "Registra tu salud diaria, monitorea síntomas y comparte información con tu equipo médico—todo en un solo lugar. Únete a Saguaro Link hoy y comienza tu camino hacia un mejor manejo de tu salud.",
+    "Get Started Today": "Empieza Hoy",
+    "Explore Banner Health": "Explorar Banner Health",
+    "Banner Health Resources": "Recursos de Banner Health",
+    "Quick links to services and patient tools from Banner Health.": "Enlaces rápidos a servicios y herramientas para pacientes de Banner Health.",
+    "Banner Health Services": "Servicios de Banner Health",
+    "Browse core care options like primary care, urgent care, imaging, surgery, and specialty medicine.": "Navega por opciones de atención primaria, atención de urgencia, imágenes, cirugía y medicina especializada.",
+    "Patients & Visitors": "Pacientes y Visitantes",
+    "Find patient tools such as billing, medical records, the Banner app, symptom checker, and more.": "Encuentra herramientas para pacientes como facturación, registros médicos, la aplicación de Banner, evaluador de síntomas y más.",
+    "Patient Account": "Cuenta del Paciente",
+    "Manage appointments, view records, message your care team, and request prescription renewals.": "Administra citas, ve registros, envía mensajes a tu equipo de salud y solicita renovaciones de recetas.",
+    "Health & Wellness": "Salud y Bienestar",
+    "Explore education, health checks, support groups, and prevention resources from Banner Health.": "Explora recursos de educación, chequeos de salud, grupos de apoyo y prevención de Banner Health.",
+    "Open Banner Health": "Abrir Banner Health"
   }
 };
 
