@@ -14,9 +14,9 @@ const History = () => {
   useEffect(() => {
     // Scroll to top on mount
     window.scrollTo(0, 0);
-    
+
     // Fetch checkins history
-    axios.get('http://localhost:5001/api/checkins')
+    axios.get('http://localhost:5000/api/checkins')
       .then(res => {
         setLogs(res.data);
         setLoading(false);
@@ -52,7 +52,7 @@ const History = () => {
           <div className="history-list">
             {logs.map((log, index) => {
               const bloodSugar = log.blood_sugar;
-              
+
               // Apply Checkin.css style classes
               let readingClass = 'reading--normal';
               if (bloodSugar < 70) {
@@ -76,20 +76,20 @@ const History = () => {
                     </div>
                     {log.mood && <div className="history-mood">{t(log.mood)}</div>}
                   </div>
-                  
+
                   <div className="history-details">
                     <div className="history-reading">
                       <span className="history-reading-label">{t('Blood Sugar')}</span>
                       <div className={`reading-box ${readingClass}`}>
-                        {bloodSugar} <span style={{fontSize: '0.85rem', fontWeight: '500'}}>mg/dL</span>
+                        {bloodSugar} <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>mg/dL</span>
                       </div>
                     </div>
-                    
+
                     {(log.systolic && log.diastolic) && (
                       <div className="history-reading">
                         <span className="history-reading-label">{t('Blood Pressure')}</span>
                         <div className="reading-box">
-                          {log.systolic}/{log.diastolic} <span style={{fontSize: '0.85rem', fontWeight: '500'}}>mmHg</span>
+                          {log.systolic}/{log.diastolic} <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>mmHg</span>
                         </div>
                       </div>
                     )}

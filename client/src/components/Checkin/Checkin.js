@@ -109,7 +109,7 @@ const CheckInDashboard = () => {
     setSubmitting(true);
 
     try {
-      await axios.post('http://localhost:5001/api/checkins', {
+      await axios.post('http://localhost:5000/api/checkins', {
         blood_sugar: parseInt(form.glucose) || null,
         insulin_taken: null,
         medications_taken: null,

@@ -61,6 +61,8 @@ const initDb = async () => {
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
+      ALTER TABLE daily_checkins DROP CONSTRAINT IF EXISTS daily_checkins_user_id_checkin_date_key;
+
       -- Credits ledger table
       CREATE TABLE IF NOT EXISTS credits_ledger (
           id SERIAL PRIMARY KEY,

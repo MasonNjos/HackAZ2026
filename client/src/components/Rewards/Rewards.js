@@ -23,7 +23,7 @@ const Rewards = () => {
     const fetchRewards = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('http://localhost:5001/api/credits/balance');
+            const res = await axios.get('http://localhost:5000/api/credits/balance');
             setRewardsData(res.data);
             setLoading(false);
         } catch (err) {
@@ -39,7 +39,7 @@ const Rewards = () => {
         }
 
         try {
-            const res = await axios.post('http://localhost:5001/api/redeem', {
+            const res = await axios.post('http://localhost:5000/api/redeem', {
                 reward_type: type,
                 cost: cost
             });
@@ -105,8 +105,8 @@ const Rewards = () => {
                         <div className="redeem-icon">🏥</div>
                         <h4>100 {t('Banner Bucks')}</h4>
                         <p>{t('Cost: 1000 Points')}</p>
-                        <button 
-                            className="btn-primary redeem-btn" 
+                        <button
+                            className="btn-primary redeem-btn"
                             onClick={() => handleRedeem('Banner Bucks', 1000)}
                             disabled={rewardsData.balance < 1000}
                         >
@@ -117,8 +117,8 @@ const Rewards = () => {
                         <div className="redeem-icon">🛒</div>
                         <h4>50 {t('Groceries Credit')}</h4>
                         <p>{t('Cost: 500 Points')}</p>
-                        <button 
-                            className="btn-primary redeem-btn" 
+                        <button
+                            className="btn-primary redeem-btn"
                             onClick={() => handleRedeem('Groceries Credit', 500)}
                             disabled={rewardsData.balance < 500}
                         >
@@ -129,8 +129,8 @@ const Rewards = () => {
                         <div className="redeem-icon">🏥</div>
                         <h4>20 {t('Banner Bucks')}</h4>
                         <p>{t('Cost: 200 Points')}</p>
-                        <button 
-                            className="btn-primary redeem-btn" 
+                        <button
+                            className="btn-primary redeem-btn"
                             onClick={() => handleRedeem('Banner Bucks', 200)}
                             disabled={rewardsData.balance < 200}
                         >

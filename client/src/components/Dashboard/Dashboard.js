@@ -22,11 +22,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isAuthenticated || localUser) {
-      axios.get('http://localhost:5001/api/rides')
+      axios.get('http://localhost:5000/api/rides')
         .then(res => setRides(res.data))
         .catch(err => console.error('Error fetching rides:', err));
-        
-      axios.get('http://localhost:5001/api/credits/balance')
+
+      axios.get('http://localhost:5000/api/credits/balance')
         .then(res => setRewardsData(res.data))
         .catch(err => console.error('Error fetching rewards:', err));
     }
@@ -55,11 +55,11 @@ const Dashboard = () => {
               </button>
             </div>
           ) : (
-              <div className="user-actions">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginRight: '1rem', background: '#f5f5f5', padding: '0.5rem 1rem', borderRadius: '8px' }}>
-                  <span style={{ fontWeight: 'bold', color: '#ff7b00' }}>🔥 {rewardsData?.streak || 0} {rewardsData?.streak === 1 ? t("Day") : t("Days")}</span>
-                  <span style={{ fontWeight: 'bold', color: '#fbbc05' }}>⭐ {rewardsData?.balance || 0}</span>
-                </div>
+            <div className="user-actions">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginRight: '1rem', background: '#f5f5f5', padding: '0.5rem 1rem', borderRadius: '8px' }}>
+                <span style={{ fontWeight: 'bold', color: '#ff7b00' }}>🔥 {rewardsData?.streak || 0} {rewardsData?.streak === 1 ? t("Day") : t("Days")}</span>
+                <span style={{ fontWeight: 'bold', color: '#fbbc05' }}>⭐ {rewardsData?.balance || 0}</span>
+              </div>
               <LanguageToggle />
               <p className="welcome-text">{t("Welcome")}, {user?.given_name || user?.name || localUser?.email}!</p>
               <button
@@ -74,7 +74,7 @@ const Dashboard = () => {
                   }
                 }}
               >
-                 {t("Log Out")}
+                {t("Log Out")}
               </button>
             </div>
           )}
@@ -156,7 +156,7 @@ const Dashboard = () => {
                         {new Date(ride.date).toLocaleDateString()}
                       </strong>
                       <span style={{ fontSize: '0.85rem', color: '#555' }}>
-                        {ride.time.slice(0,5)} {ride.wheelchair ? '♿' : ''}
+                        {ride.time.slice(0, 5)} {ride.wheelchair ? '♿' : ''}
                       </span>
                     </div>
                   </div>
