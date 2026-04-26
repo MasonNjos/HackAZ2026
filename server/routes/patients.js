@@ -20,7 +20,6 @@ router.get('/', async (req, res) => {
 // POST create/update patient profile
 router.post('/', async (req, res) => {
   try {
-    const userId = 1; // mock for MVP
     const {
       name,
       sex,
@@ -28,25 +27,27 @@ router.post('/', async (req, res) => {
       weight_lbs,
       date_of_birth,
       diseases,
-      tobacco_vaping,
+      tobacco_vaping_times_per_week, // matches what Onboarding.js sends
       drinking_times_per_week,
     } = req.body ?? {};
 
+    // Insert a new patient row each time (no mock user_id conflict)
     const result = await pool.query(
       `INSERT INTO patients 
         (user_id, name, sex, height_in, weight_lbs, date_of_birth, diseases, tobacco_vaping, drinking_times_per_week)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-       ON CONFLICT (user_id) DO UPDATE SET
-        name = EXCLUDED.name,
-        sex = EXCLUDED.sex,
-        height_in = EXCLUDED.height_in,
-        weight_lbs = EXCLUDED.weight_lbs,
-        date_of_birth = EXCLUDED.date_of_birth,
-        diseases = EXCLUDED.diseases,
-        tobacco_vaping = EXCLUDED.tobacco_vaping,
-        drinking_times_per_week = EXCLUDED.drinking_times_per_week
        RETURNING *`,
-      [userId, name, sex, height_in, weight_lbs, date_of_birth, diseases, tobacco_vaping, drinking_times_per_week]
+      [
+        null, // user_id is null until Auth0 is wired up
+        name,
+        sex,
+        height_in,
+        weight_lbs,
+        date_of_birth,
+        diseases,
+        tobacco_vaping_times_per_week > 0, // convert to boolean for the DB column
+        drinking_times_per_week,
+      ]
     );
     res.json(result.rows[0]);
   } catch (err) {

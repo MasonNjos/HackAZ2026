@@ -59,9 +59,17 @@ router.post('/', async (req, res) => {
         const symptomsText = symptoms === undefined || symptoms === null ? null : String(symptoms);
 
         const result = await pool.query(
-            'INSERT INTO daily_checkins (user_id, checkin_date, blood_sugar, insulin_taken, medications_taken, symptoms) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [userId, checkinDate, bloodSugarNum, insulinNum, medsText, symptomsText]
-        );
+            `INSERT INTO daily_checkins 
+              (user_id, checkin_date, blood_sugar, insulin_taken, medications_taken, symptoms, mood, systolic, diastolic, activity_done, activity_details, notes)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
+            [userId, checkinDate, bloodSugarNum, insulinNum, medsText, symptomsText,
+             req.body.mood || null,
+             req.body.systolic || null,
+             req.body.diastolic || null,
+             req.body.activity_done || false,
+             req.body.activity_details || null,
+             req.body.notes || null]
+          );
 
         // Award credits
         await pool.query(
