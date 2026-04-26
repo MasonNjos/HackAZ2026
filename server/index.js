@@ -34,11 +34,11 @@ app.get('/api/health', (req, res) => {
 });
 
 // Auth0-protected test route (send Authorization: Bearer <access_token>)
-app.get('/api/private', checkJwt, (req, res) => {
-  res.json({ ok: true, message: 'You are authenticated with Auth0.' });
-});
+//app.get('/api/private', checkJwt, (req, res) => {
+//  res.json({ ok: true, message: 'You are authenticated with Auth0.' });
+//});
 
-app.use('/api/auth', require('./routes/auth'));
+//app.use('/api/auth', require('./routes/auth'));
 app.use('/api/checkins', require('./routes/checkins'));
 app.use('/api/credits', require('./routes/credits'));
 app.use('/api/events', require('./routes/events'));

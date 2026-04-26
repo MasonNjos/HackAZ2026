@@ -59,7 +59,7 @@ CREATE TABLE patients (
     weight_lbs DECIMAL(5,2),
     date_of_birth DATE,
     diseases TEXT[],
-    tobacco_vaping BOOLEAN DEFAULT false,
+    tobacco_vaping_times_per_week INTEGER,
     drinking_times_per_week INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
