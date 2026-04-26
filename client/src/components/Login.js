@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import BannerResources from './BannerResources';
 
 const Login = () => {
   const { loginWithRedirect } = useAuth0();
@@ -46,6 +47,10 @@ const Login = () => {
           Get Started Today
         </button>
       </section>
+
+      <div className="dashboard-main dashboard-main--login">
+        <BannerResources compact />
+      </div>
     </div>
   );
 };

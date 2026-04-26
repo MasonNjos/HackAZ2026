@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
+import BannerResources from '../BannerResources';
 
 const Dashboard = () => {
   const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
@@ -113,6 +114,8 @@ const Dashboard = () => {
               <p>Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.</p>
             </div>
           </div>
+
+          <BannerResources title="Banner Health Resources" />
 
         </main>
       )}
