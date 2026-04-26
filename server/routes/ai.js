@@ -1,10 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const { GoogleGenAI } = require('@google/genai');
+
+function getAI() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new Error('GEMINI_API_KEY is missing in server environment');
+  return new GoogleGenAI({ apiKey });
+}
 
 router.post('/analyze-manual', async (req, res) => {
   try {
     const checkInData = req.body;
-    let prompt = `You are a calm, approachable health assistant — knowledgeable but not clinical. Respond in 2-3 sentences, conversational but professional. No filler phrases like "Great job!". Always acknowledge the health-related details.
+    const prompt = `You are a calm, approachable health assistant — knowledgeable but not clinical. Respond in 2-3 sentences, conversational but professional. No filler phrases like "Great job!". Always acknowledge the health-related details.
 User's check-in:
 - Mood: ${checkInData.mood || 'not mentioned'}
 - Activity: ${checkInData.activity_done ? checkInData.activity_details || 'some activity' : 'no activity today'}
@@ -13,22 +20,13 @@ User's check-in:
 - Blood Sugar: ${checkInData.blood_sugar || 'not logged'}
 - Notes: ${checkInData.notes || 'none'}`;
 
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'llama3.2',
-        prompt: prompt,
-        stream: false
-      })
+    const ai = getAI();
+    const response = await ai.models.generateContent({
+      model: 'gemma-4-26b-a4b-it',
+      contents: prompt,
     });
 
-    if (!response.ok) {
-      throw new Error(`Ollama API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    res.json({ insight: data.response });
+    res.json({ insight: response.text });
   } catch (error) {
     console.error('Manual Analysis Error:', error);
     res.status(500).json({ error: 'Failed to analyze data' });
@@ -38,24 +36,15 @@ User's check-in:
 router.post('/analyze-voice', async (req, res) => {
   try {
     const { transcript } = req.body;
-    let prompt = `You are a friendly health assistant. The user just finished a voice check-in. Respond naturally in 2-3 sentences to their voice transcript: "${transcript}". Address any health details they mentioned with empathy and a practical observation.`;
+    const prompt = `You are a friendly health assistant. The user just finished a voice check-in. Respond naturally in 2-3 sentences to their voice transcript: "${transcript}". Address any health details they mentioned with empathy and a practical observation.`;
 
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'llama3.2',
-        prompt: prompt,
-        stream: false
-      })
+    const ai = getAI();
+    const response = await ai.models.generateContent({
+      model: 'gemma-4-26b-a4b-it',
+      contents: prompt,
     });
 
-    if (!response.ok) {
-      throw new Error(`Ollama API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    res.json({ insight: data.response });
+    res.json({ insight: response.text });
   } catch (error) {
     console.error('Voice Analysis Error:', error);
     res.status(500).json({ error: 'Failed to analyze transcript' });
@@ -77,6 +66,7 @@ CRITICAL RULES:
 - glucose: Must be a pure number (e.g., 105). If not mentioned, use 0.
 - systolic/diastolic: Must be pure numbers. If not mentioned, use 0.
 - booleans: true or false.
+- Output ONLY raw JSON. No markdown, no backticks, no explanation.
 
 ### Examples:
 Input: "I feel okay. My sugar was 115 today."
@@ -101,36 +91,25 @@ Output: {"mood": "Great", "hasActivity": false, "activityDetails": "", "hasSympt
 ### User Transcript to Parse:
 "${transcript}"`;
 
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'llama3.2',
-        prompt: prompt,
-        format: 'json',
-        stream: false,
-        options: {
-          temperature: 0,
-          stop: ["###"]
-        }
-      })
+    const ai = getAI();
+    const response = await ai.models.generateContent({
+      model: 'gemma-4-26b-a4b-it',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        temperature: 0,
+      },
     });
 
-    if (!response.ok) {
-      throw new Error(`Ollama API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    console.log("🤖 Raw AI Extraction Response:", data.response);
+    console.log("🤖 Raw AI Extraction Response:", response.text);
 
     let parsedData = {};
     try {
-      // Clean the response in case there's markdown or extra text
-      const cleanJson = data.response.replace(/```json/g, '').replace(/```/g, '').trim();
+      const cleanJson = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
       parsedData = JSON.parse(cleanJson);
     } catch (parseErr) {
       console.error('Failed to parse AI JSON output:', parseErr);
-      const jsonMatch = data.response.match(/\{[\s\S]*\}/);
+      const jsonMatch = response.text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         parsedData = JSON.parse(jsonMatch[0]);
       }
@@ -142,7 +121,5 @@ Output: {"mood": "Great", "hasActivity": false, "activityDetails": "", "hasSympt
     res.status(500).json({ error: 'Failed to parse transcript' });
   }
 });
-
-
 
 module.exports = router;

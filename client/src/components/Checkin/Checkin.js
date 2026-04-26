@@ -179,7 +179,7 @@ const CheckInDashboard = () => {
     if (mode === 'speech' && transcript) {
       setAiLoading(true);
       try {
-        const parseRes = await axios.post('http://localhost:5000/api/ai/parse', { transcript });
+        const parseRes = await axios.post('/api/ai/parse', { transcript });
 
         console.log("✨ Auto-filled JSON from LLM API:", parseRes.data);
 
@@ -219,7 +219,7 @@ const CheckInDashboard = () => {
     };
 
     try {
-      await axios.post('http://localhost:5000/api/checkins', checkinPayload);
+      await axios.post('/api/checkins', checkinPayload);
 
       setSubmitting(false);
       setSuccess(true);
@@ -230,7 +230,7 @@ const CheckInDashboard = () => {
         const aiPayload = { ...checkinPayload, transcript };
         // Split the calls: one for voice mode, one for others
         const endpoint = mode === 'speech' ? 'analyze-voice' : 'analyze-manual';
-        const aiRes = await axios.post(`http://localhost:5000/api/ai/${endpoint}`, aiPayload);
+        const aiRes = await axios.post(`/api/ai/${endpoint}`, aiPayload);
 
         setAiInsight(aiRes.data.insight);
       } catch (aiErr) {
