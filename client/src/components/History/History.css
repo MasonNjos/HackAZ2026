@@ -14,6 +14,7 @@
   background: linear-gradient(135deg, #3B82C4 0%, #2563A8 100%);
   color: #fff;
   padding: 1.25rem 1.5rem;
+  position: relative;
 }
 
 .history-header-inner {
@@ -31,21 +32,7 @@
   margin: 0;
 }
 
-.btn-back-header {
-  background: transparent;
-  border: 2px solid #fff;
-  color: #fff;
-  padding: 0.5rem 1rem;
-  font-weight: bold;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-
-.btn-back-header:hover {
-  background: #fff;
-  color: #2563A8;
-}
+/* .btn-back-header replaced by global .page-back-btn */
 
 /* ── Main ── */
 .history-main {

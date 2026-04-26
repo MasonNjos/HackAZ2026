@@ -44,35 +44,7 @@
   opacity: 0.9;
 }
 
-.rr-back-btn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 4px;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0.4rem 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s, opacity 0.15s, transform 0.1s;
-}
-
-.rr-back-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  opacity: 0.9;
-}
-
-.rr-back-btn:active {
-  transform: scale(0.95);
-}
-
-.rr-back-btn--corner {
-  position: absolute;
-  top: 1.25rem;
-  left: 1.5rem;
-}
+/* .rr-back-btn replaced by global .page-back-btn */
 
 /* ── Main ── */
 .rr-main {

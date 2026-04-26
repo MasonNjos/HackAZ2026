@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { GoogleGenAI } = require('@google/genai');
 
+console.log('✅ AI Routes file loaded');
+
 function getAI() {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error('GEMINI_API_KEY is missing in server environment');
@@ -29,7 +31,8 @@ User's check-in:
       contents: prompt,
     });
 
-    res.json({ insight: response.text });
+    const rawText = typeof response.text === 'function' ? await response.text() : response.text;
+    res.json({ insight: rawText });
   } catch (error) {
     console.error('Manual Analysis Error:', error);
     res.status(500).json({ error: 'Failed to analyze data' });
@@ -49,7 +52,8 @@ router.post('/analyze-voice', async (req, res) => {
       contents: prompt,
     });
 
-    res.json({ insight: response.text });
+    const rawText = typeof response.text === 'function' ? await response.text() : response.text;
+    res.json({ insight: rawText });
   } catch (error) {
     console.error('Voice Analysis Error:', error);
     res.status(500).json({ error: 'Failed to analyze transcript' });
@@ -64,22 +68,29 @@ router.post('/parse', async (req, res) => {
       return res.status(400).json({ error: 'No transcript provided' });
     }
 
+    const isSpanish = language === 'es';
+
     const prompt = `### System:
 You are a medical data extraction bot. Extract health metrics into JSON.
-The input transcript is in ${language === 'es' ? 'Spanish' : 'English'}.
+The input transcript is in ${isSpanish ? 'Spanish' : 'English'}.
+
 CRITICAL RULES:
-- mood: Must be one of [Great, Good, Okay, Not great, Poor]
+- mood: Must be one of [Great, Good, Okay, Not great, Poor]. IMPORTANT: Even if the user speaks in Spanish, you MUST output one of these exact English strings (e.g., "Great" for "Excelente", "Okay" for "Más o menos").
 - glucose: Must be a pure number (e.g., 105). If not mentioned, use 0.
 - systolic/diastolic: Must be pure numbers. If not mentioned, use 0.
 - booleans: true or false.
 - Output ONLY raw JSON. No markdown, no backticks, no explanation.
 
 ### Examples:
-Input: "I feel okay. My sugar was 115 today."
+${isSpanish ? `Input: "Me siento regular. Mi azúcar estaba en 115 hoy."
+Output: {"mood": "Okay", "hasActivity": false, "activityDetails": "", "hasSymptoms": false, "symptomsText": "", "systolic": 0, "diastolic": 0, "glucose": 115, "notes": ""}
+
+Input: "Mi presión es 130 sobre 85 y mi glucosa es 90. Me siento excelente."
+Output: {"mood": "Great", "hasActivity": false, "activityDetails": "", "hasSymptoms": false, "symptomsText": "", "systolic": 130, "diastolic": 85, "glucose": 90, "notes": ""}` : `Input: "I feel okay. My sugar was 115 today."
 Output: {"mood": "Okay", "hasActivity": false, "activityDetails": "", "hasSymptoms": false, "symptomsText": "", "systolic": 0, "diastolic": 0, "glucose": 115, "notes": ""}
 
 Input: "My pressure is 130 over 85 and my glucose is 90. I'm feeling great."
-Output: {"mood": "Great", "hasActivity": false, "activityDetails": "", "hasSymptoms": false, "symptomsText": "", "systolic": 130, "diastolic": 85, "glucose": 90, "notes": ""}
+Output: {"mood": "Great", "hasActivity": false, "activityDetails": "", "hasSymptoms": false, "symptomsText": "", "systolic": 130, "diastolic": 85, "glucose": 90, "notes": ""}`}
 
 ### Structure:
 {
@@ -107,24 +118,29 @@ Output: {"mood": "Great", "hasActivity": false, "activityDetails": "", "hasSympt
       },
     });
 
-    console.log("🤖 Raw AI Extraction Response:", response.text);
+    const rawText = typeof response.text === 'function' ? await response.text() : response.text;
+    console.log("🤖 Raw AI Extraction Response:", rawText);
 
     let parsedData = {};
-    try {
-      const cleanJson = response.text.replace(/```json/g, '').replace(/```/g, '').trim();
-      parsedData = JSON.parse(cleanJson);
-    } catch (parseErr) {
-      console.error('Failed to parse AI JSON output:', parseErr);
-      const jsonMatch = response.text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        parsedData = JSON.parse(jsonMatch[0]);
+    if (rawText) {
+      try {
+        const cleanJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+        parsedData = JSON.parse(cleanJson);
+      } catch (parseErr) {
+        console.error('Failed to parse AI JSON output, trying regex:', parseErr);
+        const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          parsedData = JSON.parse(jsonMatch[0]);
+        }
       }
+    } else {
+      throw new Error('AI returned an empty response');
     }
 
     res.json(parsedData);
   } catch (error) {
     console.error('AI Parse Error:', error);
-    res.status(500).json({ error: 'Failed to parse transcript' });
+    res.status(500).json({ error: 'Failed to parse transcript', details: error.message });
   }
 });
 

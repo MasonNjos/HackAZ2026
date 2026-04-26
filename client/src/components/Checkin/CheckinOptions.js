@@ -12,6 +12,9 @@ const CheckinOptions = () => {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
+        <button className="page-back-btn" onClick={() => navigate('/')}>
+          ← {t("Back to Home")}
+        </button>
         <div className="header-inner">
           <div>
             <h1>{t("Saguaro Link")}</h1>
@@ -19,9 +22,6 @@ const CheckinOptions = () => {
           </div>
           <div className="user-actions">
             <LanguageToggle />
-            <button className="btn-secondary" onClick={() => navigate('/')}>
-               {t("Back to Home")}
-            </button>
           </div>
         </div>
       </header>

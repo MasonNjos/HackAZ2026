@@ -20,6 +20,7 @@ body {
   background: linear-gradient(135deg, #3B82C4 0%, #2563A8 100%);
   color: #ffffff;
   padding: 1.25rem 1.5rem;
+  position: relative;
 }
 
 .header-inner {

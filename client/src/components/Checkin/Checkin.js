@@ -11,7 +11,7 @@ const MOODS = ['Great', 'Good', 'Okay', 'Not great', 'Poor'];
 const CheckInDashboard = () => {
   const { user } = useAuth0();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [form, setForm] = useState({
     mood: '',
@@ -59,6 +59,7 @@ const CheckInDashboard = () => {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
+    recognition.lang = language === 'es' ? 'es-ES' : 'en-US';
 
     let currentFinalTranscript = transcript;
 
@@ -113,7 +114,7 @@ const CheckInDashboard = () => {
         },
         body: JSON.stringify({
           text: text,
-          model_id: 'eleven_turbo_v2',
+          model_id: language === 'es' ? 'eleven_multilingual_v2' : 'eleven_turbo_v2',
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.5,
@@ -179,7 +180,7 @@ const CheckInDashboard = () => {
     if (mode === 'speech' && transcript) {
       setAiLoading(true);
       try {
-        const parseRes = await axios.post('/api/ai/parse', { transcript, language });
+        const parseRes = await axios.post('http://localhost:5001/api/ai/parse', { transcript, language });
 
         console.log("✨ Auto-filled JSON from LLM API:", parseRes.data);
 
@@ -197,7 +198,8 @@ const CheckInDashboard = () => {
 
       } catch (parseErr) {
         console.error('AI Parse Error:', parseErr);
-        alert(t('Could not process your voice input into data. Please try speaking clearly or enter manually.'));
+        const detail = parseErr.response?.data?.details || parseErr.message;
+        alert(`${t('Could not process your voice input into data. Please try speaking clearly or enter manually.')}\n\nError: ${detail}`);
         setAiLoading(false);
         setSubmitting(false);
         return;
@@ -219,7 +221,7 @@ const CheckInDashboard = () => {
     };
 
     try {
-      await axios.post('/api/checkins', checkinPayload);
+      await axios.post('http://localhost:5001/api/checkins', checkinPayload);
 
       setSubmitting(false);
       setSuccess(true);
@@ -230,7 +232,7 @@ const CheckInDashboard = () => {
         const aiPayload = { ...checkinPayload, transcript };
         // Split the calls: one for voice mode, one for others
         const endpoint = mode === 'speech' ? 'analyze-voice' : 'analyze-manual';
-        const aiRes = await axios.post(`/api/ai/${endpoint}`, { ...aiPayload, language });
+        const aiRes = await axios.post(`http://localhost:5001/api/ai/${endpoint}`, { ...aiPayload, language });
 
         setAiInsight(aiRes.data.insight);
       } catch (aiErr) {

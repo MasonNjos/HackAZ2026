@@ -16,7 +16,7 @@ const History = () => {
     window.scrollTo(0, 0);
 
     // Fetch checkins history
-    axios.get('http://localhost:5000/api/checkins')
+    axios.get('http://localhost:5001/api/checkins')
       .then(res => {
         setLogs(res.data);
         setLoading(false);
@@ -34,10 +34,10 @@ const History = () => {
   return (
     <div className="history-page">
       <header className="history-header-bar">
+        <button onClick={() => navigate(-1)} className="page-back-btn">
+          &larr; {t('Back')}
+        </button>
         <div className="history-header-inner">
-          <button onClick={() => navigate(-1)} className="btn-back-header">
-            &larr; {t('Back')}
-          </button>
           <h1>{t('My History Logs')}</h1>
         </div>
       </header>

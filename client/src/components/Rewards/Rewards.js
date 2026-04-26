@@ -57,9 +57,9 @@ const Rewards = () => {
 
     return (
         <div className="rewards-container">
+            <Link to="/" className="page-back-btn rewards-back-btn">&larr; {t('Back to Dashboard')}</Link>
             <header className="rewards-header">
                 <h2>🎁 {t('Rewards & Incentives')}</h2>
-                <Link to="/" className="btn-secondary">{t('Back to Dashboard')}</Link>
             </header>
 
             {error && <div className="rewards-error">{error}</div>}

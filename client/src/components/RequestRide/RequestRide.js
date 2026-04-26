@@ -32,7 +32,7 @@ const RequestRide = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await axios.post('http://localhost:5000/api/rides', {
+      await axios.post('http://localhost:5001/api/rides', {
         pickup: form.pickup,
         destination: form.destination,
         date: form.date,
@@ -62,7 +62,7 @@ const RequestRide = () => {
       <header className="rr-header">
         <button
           onClick={() => navigate('/')}
-          className="rr-back-btn rr-back-btn--corner"
+          className="page-back-btn"
           title={t("Go back")}
         >
           &larr; {t("Back")}

@@ -58,8 +58,8 @@ const DoctorChat = () => {
   return (
     <div className="chat-page">
       <header className="chat-header">
+        <Link to="/" className="page-back-btn">← {t("Back")}</Link>
         <div className="chat-header-inner">
-          <Link to="/" className="chat-back-btn">← {t("Back")}</Link>
           <div className="chat-dr-info">
             <h1>{t("Saguaro Link")}</h1>
             <p>{t("Chatting with: ")}<strong>{t("Dr. Arispe")}</strong></p>

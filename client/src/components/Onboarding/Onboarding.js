@@ -76,7 +76,7 @@ const Onboarding = () => {
     };
 
     try {
-      await axios.post('/api/patients', outputJSON.patients[0]);
+      await axios.post('http://localhost:5001/api/patients', outputJSON.patients[0]);
       sessionStorage.setItem(`onboarded_${user?.sub}`, 'true');
       navigate('/', { replace: true });
     } catch (err) {
