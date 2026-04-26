@@ -20,7 +20,7 @@ const Login = () => {
         <div className="header-inner">
           <div>
             <h1>Saguaro Link</h1>
-            <p className="header-subtitle">Your Diabetes Management Portal</p>
+           
           </div>
           <div className="auth-actions">
             {/* Standard Login */}
@@ -38,8 +38,8 @@ const Login = () => {
       <section className="hero-section">
         <h2>Take Control of Your Health</h2>
         <p>
-          Track your blood glucose, earn health credits, and manage your 
-          wellness journey with our simplified dashboard.
+         Track your daily health, monitor symptoms, and share insights with your care team—all in one place. 
+         Join Saguaro Link today and start your journey towards better health management. 
         </p>
         {/* Redirects to OAuth Signup */}
         <button className="btn-primary btn-large" onClick={handleSignUp}>
