@@ -4,7 +4,7 @@ require('dotenv').config();
 const { pool } = require('./db/pool');
 const { optionalAuth0 } = require('./middleware/auth0Optional');
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 // Middleware
 const corsOrigin = process.env.CORS_ORIGIN;
 app.use(
@@ -60,6 +60,8 @@ const initDb = async () => {
           notes TEXT,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      ALTER TABLE daily_checkins DROP CONSTRAINT IF EXISTS daily_checkins_user_id_checkin_date_key;
 
       -- Credits ledger table
       CREATE TABLE IF NOT EXISTS credits_ledger (
@@ -158,6 +160,7 @@ app.use('/api/redeem', require('./routes/redeem'));
 app.use('/api/insights', require('./routes/insights'));
 app.use('/api/patients', require('./routes/patients'));
 app.use('/api/rides', require('./routes/rides'));
+app.use('/api/ai', require('./routes/ai')); // <── NEW AI ROUTE
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

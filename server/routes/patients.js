@@ -31,11 +31,20 @@ router.post('/', async (req, res) => {
       drinking_times_per_week,
     } = req.body ?? {};
 
-    // Insert a new patient row each time (no mock user_id conflict)
+    // Upsert the patient row (update if exists)
     const result = await pool.query(
       `INSERT INTO patients 
         (user_id, name, sex, height_in, weight_lbs, date_of_birth, diseases, tobacco_vaping_times_per_week, drinking_times_per_week)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+       ON CONFLICT (user_id) DO UPDATE SET
+         name = EXCLUDED.name,
+         sex = EXCLUDED.sex,
+         height_in = EXCLUDED.height_in,
+         weight_lbs = EXCLUDED.weight_lbs,
+         date_of_birth = EXCLUDED.date_of_birth,
+         diseases = EXCLUDED.diseases,
+         tobacco_vaping_times_per_week = EXCLUDED.tobacco_vaping_times_per_week,
+         drinking_times_per_week = EXCLUDED.drinking_times_per_week
        RETURNING *`,
       [
         1, // user_id is mocked to 1 until Auth0 is wired up
