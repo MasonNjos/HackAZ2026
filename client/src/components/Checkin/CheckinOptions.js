@@ -27,7 +27,7 @@ const CheckinOptions = () => {
       </header>
 
       <main className="dashboard-main">
-        <section className="sections" style={{ marginTop: '2rem' }}>
+        <section className="sections-horizontal" style={{ marginTop: '2rem' }}>
           {/* Option 1: Text */}
           <div className="section-card">
             <div className="card-icon card-icon--blue">⌨️</div>

@@ -57,7 +57,7 @@ const Dashboard = () => {
           ) : (
               <div className="user-actions">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginRight: '1rem', background: '#f5f5f5', padding: '0.5rem 1rem', borderRadius: '8px' }}>
-                  <span style={{ fontWeight: 'bold', color: '#ff7b00' }}>🔥 {rewardsData?.streak || 0} {t("Days")}</span>
+                  <span style={{ fontWeight: 'bold', color: '#ff7b00' }}>🔥 {rewardsData?.streak || 0} {rewardsData?.streak === 1 ? t("Day") : t("Days")}</span>
                   <span style={{ fontWeight: 'bold', color: '#fbbc05' }}>⭐ {rewardsData?.balance || 0}</span>
                 </div>
               <LanguageToggle />

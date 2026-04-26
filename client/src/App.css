@@ -173,6 +173,18 @@ body {
   gap: 1.5rem;
 }
 
+.sections-horizontal {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .sections-horizontal {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .section-card {
   padding: 1.5rem;
   background-color: #ffffff;

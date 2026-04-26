@@ -67,7 +67,7 @@ const Rewards = () => {
 
             <div className="rewards-stats">
                 <div className="stat-card streak-card">
-                    <h3>🔥 {rewardsData.streak} {t('Days')}</h3>
+                    <h3>🔥 {rewardsData.streak} {rewardsData.streak === 1 ? t('Day') : t('Days')}</h3>
                     <p>{t('Current Streak')}</p>
                 </div>
                 <div className="stat-card balance-card">
