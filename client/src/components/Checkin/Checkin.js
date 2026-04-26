@@ -3,6 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageToggle from '../LanguageToggle/LanguageToggle';
 import './Checkin.css';
+import axios from 'axios';
 
 const MOODS = ['Great', 'Good', 'Okay', 'Not great', 'Poor'];
 
@@ -44,36 +45,28 @@ const CheckInDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-
-    const outputJSON = {
-      check_in: {
-        user_id: user?.sub,
-        timestamp: new Date().toISOString(),
+  
+    try {
+      await axios.post('http://localhost:5000/api/checkins', {
+        blood_sugar: parseInt(form.glucose) || null,
+        insulin_taken: null,
+        medications_taken: null,
+        symptoms: form.hasSymptoms ? form.symptomsText : '',
         mood: form.mood,
-        activity: {
-          did_exercise: form.hasActivity,
-          details: form.activityDetails || "None"
-        },
-        health_metrics: {
-          symptoms: form.hasSymptoms ? form.symptomsText : "None reported",
-          blood_pressure: {
-            systolic: parseInt(form.systolic) || null,
-            diastolic: parseInt(form.diastolic) || null
-          },
-          glucose_mgdl: parseInt(form.glucose) || null
-        },
-        notes: form.notes
-      }
-    };
-
-    console.log('Sending Check-In Data:', JSON.stringify(outputJSON, null, 2));
-    
-    // Simulate API submission
-    setTimeout(() => {
+        systolic: parseInt(form.systolic) || null,
+        diastolic: parseInt(form.diastolic) || null,
+        activity_done: form.hasActivity,
+        activity_details: form.activityDetails || null,
+        notes: form.notes || null,
+      });
+  
       setSubmitting(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    }, 800);
+    } catch (err) {
+      console.error('Check-in error:', err);
+      setSubmitting(false);
+    }
   };
 
   return (

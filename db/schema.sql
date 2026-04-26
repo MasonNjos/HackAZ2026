@@ -18,6 +18,12 @@ CREATE TABLE daily_checkins (
     insulin_taken DECIMAL(5,2),
     medications_taken TEXT,
     symptoms TEXT,
+    mood VARCHAR(50),
+    systolic INTEGER,
+    diastolic INTEGER,
+    activity_done BOOLEAN DEFAULT false,
+    activity_details TEXT,
+    notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user_id, checkin_date)
 );
@@ -52,7 +58,7 @@ CREATE INDEX idx_learning_user_completed ON learning_completions(user_id, comple
 -- new patient table
 CREATE TABLE patients (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) UNIQUE,  -- ← unique constraint inline
+    user_id INTEGER REFERENCES users(id),
     name VARCHAR(255),
     sex VARCHAR(50),
     height_in DECIMAL(5,2),
