@@ -13,6 +13,7 @@ import DoctorChat from './components/DoctorChat/DoctorChat'; // <── NEW IMPO
 import RequestRide from './components/RequestRide/RequestRide';
 import History from './components/History/History'; // <── NEW IMPORT
 import Rewards from './components/Rewards/Rewards';
+import DoctorDashboard from './components/DoctorDashboard/DoctorDashboard';
 import { LanguageProvider } from './contexts/LanguageContext';
 
 // ─── THE GATEKEEPER ───
@@ -25,18 +26,39 @@ const AuthGate = ({ children }) => {
     return <Navigate to="/login" />;
   }
 
+  // Allow doctors to bypass onboarding
+  const checkDoctor = (u) => {
+    if (!u) return false;
+    const emailStr = (u.email || '').toLowerCase();
+    const nameStr = (u.name || '').toLowerCase();
+    return emailStr.endsWith('@banner.org') || nameStr.endsWith('@banner.org');
+  };
+  const isDoctor = checkDoctor(user);
+  
   const createdAt = new Date(user.updated_at || user.created_at).getTime();
   const now = new Date().getTime();
   const accountAgeInMinutes = (now - createdAt) / 1000 / 60;
   const hasFinishedOnboarding = sessionStorage.getItem(`onboarded_${user?.sub}`);
 
-  const isNewUser = accountAgeInMinutes < 2 && !hasFinishedOnboarding;
+  const isNewUser = accountAgeInMinutes < 2 && !hasFinishedOnboarding && !isDoctor;
 
   if (isNewUser) {
     return <Navigate to="/onboarding" />;
   }
 
   return children;
+};
+
+const RoleBasedDashboard = () => {
+  const { user } = useAuth0();
+  const checkDoctor = (u) => {
+    if (!u) return false;
+    const emailStr = (u.email || '').toLowerCase();
+    const nameStr = (u.name || '').toLowerCase();
+    return emailStr.endsWith('@banner.org') || nameStr.endsWith('@banner.org');
+  };
+  const isDoctor = checkDoctor(user);
+  return isDoctor ? <DoctorDashboard /> : <Dashboard />;
 };
 
 const Auth0ProviderWithNavigate = ({ children }) => {
@@ -71,7 +93,7 @@ function App() {
               <Route path="/onboarding" element={<Onboarding />} />
 
               {/* Protected Routes */}
-              <Route path="/" element={<AuthGate><Dashboard /></AuthGate>} />
+              <Route path="/" element={<AuthGate><RoleBasedDashboard /></AuthGate>} />
               <Route path="/checkin-options" element={<AuthGate><CheckinOptions /></AuthGate>} />
               <Route path="/checkin" element={<AuthGate><CheckInDashboard /></AuthGate>} />
               

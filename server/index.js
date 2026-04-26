@@ -160,7 +160,7 @@ app.use('/api/redeem', require('./routes/redeem'));
 app.use('/api/insights', require('./routes/insights'));
 app.use('/api/patients', require('./routes/patients'));
 app.use('/api/rides', require('./routes/rides'));
-app.use('/api/ai', require('./routes/ai')); // <── NEW AI ROUTE
+app.use('/api/doctor', require('./routes/doctor'));
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

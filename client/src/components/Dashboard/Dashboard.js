@@ -22,11 +22,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isAuthenticated || localUser) {
-      axios.get('http://localhost:5001/api/rides')
+      axios.get('/api/rides')
         .then(res => setRides(res.data))
         .catch(err => console.error('Error fetching rides:', err));
-
-      axios.get('http://localhost:5001/api/credits/balance')
+        
+      axios.get('/api/credits/balance')
         .then(res => setRewardsData(res.data))
         .catch(err => console.error('Error fetching rewards:', err));
     }

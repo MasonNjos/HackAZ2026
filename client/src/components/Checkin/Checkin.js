@@ -186,7 +186,18 @@ const CheckInDashboard = () => {
     };
 
     try {
-      await axios.post('http://localhost:5001/api/checkins', checkinPayload);
+      await axios.post('/api/checkins', {
+        blood_sugar: parseInt(form.glucose) || null,
+        insulin_taken: null,
+        medications_taken: null,
+        symptoms: form.hasSymptoms ? form.symptomsText : '',
+        mood: form.mood,
+        systolic: parseInt(form.systolic) || null,
+        diastolic: parseInt(form.diastolic) || null,
+        activity_done: form.hasActivity,
+        activity_details: form.activityDetails || null,
+        notes: form.notes || null,
+      });
 
       setSubmitting(false);
       setSuccess(true);
