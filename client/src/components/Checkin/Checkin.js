@@ -32,11 +32,11 @@ const CheckInDashboard = () => {
     const { name, value, type, checked } = e.target;
     setForm(prev => {
       const newState = { ...prev, [name]: type === 'checkbox' ? checked : value };
-      
+
       // Auto-reset values if the user unchecks the "has" box
       if (name === 'hasActivity' && !checked) newState.activityDetails = '';
       if (name === 'hasSymptoms' && !checked) newState.symptomsText = '';
-      
+
       return newState;
     });
   };
@@ -44,9 +44,9 @@ const CheckInDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-  
+
     try {
-      await axios.post('http://localhost:5000/api/checkins', {
+      await axios.post('http://localhost:5001/api/checkins', {
         blood_sugar: parseInt(form.glucose) || null,
         insulin_taken: null,
         medications_taken: null,
@@ -58,7 +58,7 @@ const CheckInDashboard = () => {
         activity_details: form.activityDetails || null,
         notes: form.notes || null,
       });
-  
+
       setSubmitting(false);
       setSuccess(true);
     } catch (err) {
@@ -88,7 +88,7 @@ const CheckInDashboard = () => {
 
       <main className="ci-main">
         <form onSubmit={handleSubmit} className="ci-form">
-          
+
           {/* MOOD SECTION */}
           <section className="ci-card">
             <h2 className="ci-card-title">General Wellbeing</h2>
@@ -114,11 +114,11 @@ const CheckInDashboard = () => {
             {form.hasActivity && (
               <div className="ci-field" style={{ marginTop: '1rem' }}>
                 <label>Details <span className="ci-optional">(e.g. 30 min walk)</span></label>
-                <input 
-                  type="text" 
-                  name="activityDetails" 
-                  value={form.activityDetails} 
-                  onChange={handleChange} 
+                <input
+                  type="text"
+                  name="activityDetails"
+                  value={form.activityDetails}
+                  onChange={handleChange}
                   placeholder="What activity did you do?"
                 />
               </div>
@@ -138,10 +138,10 @@ const CheckInDashboard = () => {
             {form.hasSymptoms && (
               <div className="ci-field" style={{ marginTop: '1rem' }}>
                 <label>Please describe your symptoms:</label>
-                <textarea 
-                  name="symptomsText" 
-                  value={form.symptomsText} 
-                  onChange={handleChange} 
+                <textarea
+                  name="symptomsText"
+                  value={form.symptomsText}
+                  onChange={handleChange}
                   placeholder="e.g. Mild headache since morning, slight dizziness..."
                   rows={3}
                 />
@@ -171,12 +171,12 @@ const CheckInDashboard = () => {
           <section className="ci-card">
             <h2 className="ci-card-title">Additional Notes</h2>
             <div className="ci-field">
-              <textarea 
-                name="notes" 
-                value={form.notes} 
-                onChange={handleChange} 
-                placeholder="Any other observations or concerns..." 
-                rows={3} 
+              <textarea
+                name="notes"
+                value={form.notes}
+                onChange={handleChange}
+                placeholder="Any other observations or concerns..."
+                rows={3}
               />
             </div>
           </section>

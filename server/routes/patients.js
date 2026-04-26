@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
         sex,
         height_in,
         weight_lbs,
-        date_of_birth,
+        date_of_birth === '' ? null : date_of_birth,
         diseases,
         tobacco_vaping_times_per_week,
         drinking_times_per_week,

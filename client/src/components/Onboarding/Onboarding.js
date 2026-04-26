@@ -5,8 +5,8 @@ import './Onboarding.css';
 import axios from 'axios';
 
 const DISEASE_OPTIONS = [
-  'Diabetes Type 1', 'Diabetes Type 2', 'Hypertension', 
-  'COPD', 'Asthma', 'Chronic Kidney Disease', 
+  'Diabetes Type 1', 'Diabetes Type 2', 'Hypertension',
+  'COPD', 'Asthma', 'Chronic Kidney Disease',
   'Heart Disease', 'Arthritis', 'Hyperlipidemia'
 ];
 
@@ -31,7 +31,7 @@ const Onboarding = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     setForm((prev) => {
       let updatedValue = type === 'checkbox' ? checked : value;
       let newState = { ...prev, [name]: updatedValue };
@@ -74,7 +74,7 @@ const Onboarding = () => {
     };
 
     try {
-      await axios.post('http://localhost:5000/api/patients', outputJSON.patients[0]);
+      await axios.post('http://localhost:5001/api/patients', outputJSON.patients[0]);
       sessionStorage.setItem(`onboarded_${user?.sub}`, 'true');
       navigate('/', { replace: true });
     } catch (err) {
@@ -91,7 +91,7 @@ const Onboarding = () => {
 
       <main className="ob-main">
         <form onSubmit={handleSubmit}>
-          
+
           {/* SECTION 1: Personal Information */}
           <div className="ob-card" style={{ marginBottom: '1.25rem' }}>
             <h2 className="ob-step-title">Personal Information</h2>
@@ -100,7 +100,7 @@ const Onboarding = () => {
                 <label>Full Name <span className="ob-req">*</span></label>
                 <input name="name" type="text" onChange={handleChange} placeholder="Maria Garcia" required />
               </div>
-              
+
               <div className="ob-row2">
                 <div className="ob-field">
                   <label>Sex <span className="ob-req">*</span></label>
@@ -153,28 +153,28 @@ const Onboarding = () => {
           <div className="ob-card">
             <h2 className="ob-step-title">Lifestyle & Habits</h2>
             <div className="ob-fields">
-              
+
               {/* Tobacco frequency check */}
               <div className="ob-field" style={{ borderBottom: '1px solid #eee', paddingBottom: '1rem' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                  <input 
-                    name="has_tobacco" 
-                    type="checkbox" 
-                    checked={form.has_tobacco} 
-                    onChange={handleChange} 
+                  <input
+                    name="has_tobacco"
+                    type="checkbox"
+                    checked={form.has_tobacco}
+                    onChange={handleChange}
                     style={{ width: '20px', height: '20px' }}
                   />
                   <span>I use tobacco or vaping products</span>
                 </label>
-                
+
                 {form.has_tobacco && (
                   <div style={{ marginTop: '10px', paddingLeft: '30px' }}>
                     <label style={{ fontSize: '0.85rem' }}>Times per week:</label>
-                    <input 
-                      name="tobacco_vaping_per_week" 
-                      type="number" 
-                      min="1" 
-                      value={form.tobacco_vaping_per_week} 
+                    <input
+                      name="tobacco_vaping_per_week"
+                      type="number"
+                      min="1"
+                      value={form.tobacco_vaping_per_week}
                       onChange={handleChange}
                     />
                   </div>
@@ -184,10 +184,10 @@ const Onboarding = () => {
               {/* Alcohol frequency check */}
               <div className="ob-field">
                 <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-                  <input 
-                    name="has_alcohol" 
-                    type="checkbox" 
-                    checked={form.has_alcohol} 
+                  <input
+                    name="has_alcohol"
+                    type="checkbox"
+                    checked={form.has_alcohol}
                     onChange={handleChange}
                     style={{ width: '20px', height: '20px' }}
                   />
@@ -197,11 +197,11 @@ const Onboarding = () => {
                 {form.has_alcohol && (
                   <div style={{ marginTop: '10px', paddingLeft: '30px' }}>
                     <label style={{ fontSize: '0.85rem' }}>Times per week:</label>
-                    <input 
-                      name="drinking_times_per_week" 
-                      type="number" 
-                      min="1" 
-                      value={form.drinking_times_per_week} 
+                    <input
+                      name="drinking_times_per_week"
+                      type="number"
+                      min="1"
+                      value={form.drinking_times_per_week}
                       onChange={handleChange}
                     />
                   </div>

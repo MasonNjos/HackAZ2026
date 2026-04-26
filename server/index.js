@@ -4,7 +4,7 @@ require('dotenv').config();
 const { pool } = require('./db/pool');
 const { optionalAuth0 } = require('./middleware/auth0Optional');
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 // Middleware
 const corsOrigin = process.env.CORS_ORIGIN;
 app.use(
@@ -49,8 +49,7 @@ const initDb = async () => {
           activity_done BOOLEAN DEFAULT false,
           activity_details TEXT,
           notes TEXT,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          UNIQUE(user_id, checkin_date)
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
       -- Credits ledger table
