@@ -4,7 +4,7 @@ require('dotenv').config();
 const { pool } = require('./db/pool');
 const { optionalAuth0 } = require('./middleware/auth0Optional');
 const app = express();
-const port = process.env.PORT || 5001;
+const port = process.env.PORT || 5000;
 // Middleware
 const corsOrigin = process.env.CORS_ORIGIN;
 app.use(
@@ -93,6 +93,10 @@ const initDb = async () => {
           drinking_times_per_week INTEGER,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      ALTER TABLE patients ADD COLUMN IF NOT EXISTS tobacco_vaping_times_per_week INTEGER;
+      ALTER TABLE patients ADD COLUMN IF NOT EXISTS drinking_times_per_week INTEGER;
+
 
     CREATE TABLE IF NOT EXISTS health_credits (
         id SERIAL PRIMARY KEY,

@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
        RETURNING *`,
       [
-        null, // user_id is null until Auth0 is wired up
+        1, // user_id is mocked to 1 until Auth0 is wired up
         name,
         sex,
         height_in,

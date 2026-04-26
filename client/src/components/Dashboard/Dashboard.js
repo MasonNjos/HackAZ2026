@@ -21,7 +21,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isAuthenticated || localUser) {
-      axios.get('http://localhost:5001/api/rides')
+      axios.get('http://localhost:5000/api/rides')
         .then(res => setRides(res.data))
         .catch(err => console.error('Error fetching rides:', err));
     }
