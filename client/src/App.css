@@ -1,6 +1,3 @@
-
-
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -18,8 +15,6 @@ body {
   max-width: 100%;
   margin: 0 auto;
 }
-
-
 
 .dashboard-header {
   background: linear-gradient(135deg, #3B82C4 0%, #2563A8 100%);
@@ -61,8 +56,6 @@ body {
   font-size: 1rem;
   color: #fff;
 }
-
-
 
 .btn-primary,
 .btn-secondary {
@@ -115,8 +108,6 @@ body {
   color: #fff;
 }
 
-
-
 .hero-section {
   text-align: center;
   padding: 3rem 1.5rem;
@@ -136,8 +127,6 @@ body {
   margin: 0 auto 1.5rem;
 }
 
-
-
 .dashboard-main {
   max-width: 1200px;
   margin: 0 auto;
@@ -146,8 +135,6 @@ body {
   flex-direction: column;
   gap: 1.5rem;
 }
-
-
 
 .progress-section {
   text-align: center;
@@ -179,8 +166,6 @@ body {
   font-size: 0.95rem;
   color: #444;
 }
-
-
 
 .sections {
   display: flex;
@@ -277,11 +262,12 @@ body {
   .sections {
     flex-direction: row;
     justify-content: center;
+    flex-wrap: wrap; /* Added this so 4 cards fit nicely instead of squeezing */
   }
 
   .section-card {
     flex: 1;
+    min-width: 250px; /* Added a min-width so they don't get too thin */
     max-width: 380px;
   }
 }
-
