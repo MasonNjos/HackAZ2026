@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageToggle from '../LanguageToggle/LanguageToggle';
 import BannerResources from '../BannerResources';
+import axios from 'axios';
 
 const Dashboard = () => {
   const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
   const [localUser, setLocalUser] = useState(null);
+  const [rides, setRides] = useState([]);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -16,6 +18,14 @@ const Dashboard = () => {
       setLocalUser(JSON.parse(stored));
     }
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated || localUser) {
+      axios.get('http://localhost:5001/api/rides')
+        .then(res => setRides(res.data))
+        .catch(err => console.error('Error fetching rides:', err));
+    }
+  }, [isAuthenticated, localUser]);
 
   if (isLoading) return <div style={{ textAlign: 'center', padding: '2rem', fontFamily: 'Arial, sans-serif' }}>Loading...</div>;
 
@@ -110,6 +120,33 @@ const Dashboard = () => {
             </div>
 
           </section>
+
+          {/* Scheduled Rides */}
+          {rides.length > 0 && (
+            <section className="upcoming-rides" style={{ marginBottom: '1.5rem', background: '#fff', border: '2px solid #000', padding: '1.25rem' }}>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', borderBottom: '1.5px solid #e0e0e0', paddingBottom: '0.5rem' }}>
+                🚗 {t("Upcoming Rides")}
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {rides.map(ride => (
+                  <div key={ride.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem', background: '#FFF9E6', borderLeft: '4px solid #e6a817' }}>
+                    <div>
+                      <strong style={{ display: 'block', fontSize: '1rem', color: '#333' }}>{t("To")}: {ride.destination}</strong>
+                      <span style={{ fontSize: '0.85rem', color: '#555' }}>{t("From")}: {ride.pickup}</span>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <strong style={{ display: 'block', color: '#7a4f00' }}>
+                        {new Date(ride.date).toLocaleDateString()}
+                      </strong>
+                      <span style={{ fontSize: '0.85rem', color: '#555' }}>
+                        {ride.time.slice(0,5)} {ride.wheelchair ? '♿' : ''}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Daily Tip */}
           <div className="tip-box">

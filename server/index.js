@@ -94,12 +94,24 @@ const initDb = async () => {
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
-      CREATE TABLE IF NOT EXISTS health_credits (
+    CREATE TABLE IF NOT EXISTS health_credits (
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
         amount INTEGER NOT NULL DEFAULT 0,
         description TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS rides (
+          id SERIAL PRIMARY KEY,
+          user_id INTEGER REFERENCES users(id),
+          pickup VARCHAR(255) NOT NULL,
+          destination VARCHAR(255) NOT NULL,
+          date DATE NOT NULL,
+          time TIME NOT NULL,
+          wheelchair BOOLEAN DEFAULT false,
+          reason TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
 
@@ -132,6 +144,7 @@ app.use('/api/events', require('./routes/events'));
 app.use('/api/redeem', require('./routes/redeem'));
 app.use('/api/insights', require('./routes/insights'));
 app.use('/api/patients', require('./routes/patients'));
+app.use('/api/rides', require('./routes/rides'));
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

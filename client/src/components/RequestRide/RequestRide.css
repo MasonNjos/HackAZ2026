@@ -1,0 +1,302 @@
+/* RequestRide.css — Saguaro Link Request a Ride */
+
+/* ── Page ── */
+.rr-page {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  color: #000;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── Header ── */
+.rr-header {
+  background: linear-gradient(135deg, #e6a817 0%, #b38312 100%);
+  color: #fff;
+  padding: 1.25rem 1.5rem;
+  position: relative;
+}
+
+.rr-header-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.rr-header h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.rr-header p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-top: 0.15rem;
+}
+
+.rr-welcome {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.rr-back-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.4rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, opacity 0.15s, transform 0.1s;
+}
+
+.rr-back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0.9;
+}
+
+.rr-back-btn:active {
+  transform: scale(0.95);
+}
+
+.rr-back-btn--corner {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.5rem;
+}
+
+/* ── Main ── */
+.rr-main {
+  max-width: 680px;
+  margin: 1.75rem auto;
+  padding: 0 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Cards ── */
+.rr-card {
+  background: #fff;
+  border: 2px solid #000;
+  padding: 1.5rem 1.75rem;
+}
+
+.rr-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1.5px solid #e0e0e0;
+}
+
+/* ── Form elements ── */
+.rr-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.rr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.rr-field label {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.rr-req {
+  color: #E24B4A;
+}
+
+.rr-optional {
+  font-weight: 400;
+  color: #666;
+  font-size: 0.88rem;
+}
+
+.rr-field select,
+.rr-field input[type="number"],
+.rr-field input[type="text"],
+.rr-field input[type="date"],
+.rr-field input[type="time"],
+.rr-field textarea {
+  padding: 0.65rem 0.85rem;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+  border: 2px solid #000;
+  background: #fff;
+  color: #000;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  resize: vertical;
+}
+
+.rr-field select:focus,
+.rr-field input:focus,
+.rr-field textarea:focus {
+  border-color: #e6a817;
+  box-shadow: 0 0 0 3px rgba(230, 168, 23, 0.15);
+}
+
+.rr-field textarea::placeholder,
+.rr-field input::placeholder {
+  color: #aaa;
+}
+
+/* ── Checkboxes ── */
+.rr-checkbox-group {
+  border: 2px solid #e0e0e0;
+  border-radius: 0;
+  padding: 0.85rem 1rem;
+  background: #fafafa;
+}
+
+.rr-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  user-select: none;
+}
+
+.rr-checkbox-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.rr-checkbox-box {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border: 2px solid #000;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  position: relative;
+}
+
+.rr-checkbox-label input[type="checkbox"]:checked + .rr-checkbox-box {
+  background: #000;
+}
+
+.rr-checkbox-label input[type="checkbox"]:checked + .rr-checkbox-box::after {
+  content: '';
+  width: 5px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translateY(-1px);
+  display: block;
+}
+
+/* ── Buttons ── */
+.rr-btn {
+  padding: 1rem;
+  font-size: 1.05rem;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  min-height: 52px;
+  color: #fff;
+  background: #000;
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: 0.01em;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rr-btn:hover { opacity: 0.88; }
+.rr-btn:active { transform: scale(0.99); }
+
+.rr-btn--yellow { background: #e6a817; color: #fff; }
+.rr-btn--outline { background: #fff; color: #000; border: 2px solid #000; }
+
+/* ── Status messages ── */
+.rr-success {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a5c3a;
+  background: #E6F7EF;
+  border: 2px solid #3BB87A;
+  padding: 0.7rem 1rem;
+}
+
+.rr-error {
+  font-size: 0.85rem;
+  color: #7a1f1f;
+  background: #FEF2F2;
+  border: 2px solid #E24B4A;
+  padding: 0.5rem 0.75rem;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+/* ── Daily Tip ── */
+.rr-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: #FFF9E6;
+  border: 2px solid #e6a817;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+}
+
+.rr-tip-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.rr-tip strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+  color: #7a4f00;
+}
+
+.rr-tip p {
+  color: #333;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .rr-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 2.5rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .rr-card { padding: 1.1rem 1rem; }
+  .rr-card-title { font-size: 1.1rem; }
+  .rr-btn { font-size: 1rem; }
+}
