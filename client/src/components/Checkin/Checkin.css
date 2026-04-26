@@ -333,10 +333,103 @@
   line-height: 1.5;
 }
 
+/* ── Picture Mode ── */
+.ci-picture-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  user-select: none;
+}
+
+.ci-picture-toggle input {
+  cursor: pointer;
+}
+
+.ci-mood-emojis {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.ci-emoji-btn {
+  font-size: 2.5rem;
+  background: #f4f4f4;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ci-emoji-btn:hover {
+  transform: scale(1.1);
+  background: #e0e0e0;
+}
+
+.ci-emoji-btn.selected {
+  border-color: #3B82C4;
+  background: #e6f0fa;
+  transform: scale(1.1);
+}
+
+.ci-picture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.ci-pic-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f4f4f4;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 1rem 0.5rem;
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.ci-pic-btn:hover {
+  transform: scale(1.05);
+  background: #e0e0e0;
+}
+
+.ci-pic-btn.selected {
+  border-color: #3B82C4;
+  background: #e6f0fa;
+  transform: scale(1.05);
+}
+
+.ci-pic-emoji {
+  font-size: 2.5rem;
+}
+
+.ci-pic-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
 /* ── Responsive ── */
 @media (max-width: 520px) {
   .ci-card { padding: 1.1rem 1rem; }
   .ci-card-title { font-size: 1.1rem; }
   .ci-reading-number { font-size: 1.3rem; }
   .ci-btn { font-size: 1rem; }
+  .ci-picture-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
 }
