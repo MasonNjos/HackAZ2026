@@ -24,8 +24,7 @@ CREATE TABLE daily_checkins (
     activity_done BOOLEAN DEFAULT false,
     activity_details TEXT,
     notes TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, checkin_date)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Credits ledger table
