@@ -30,6 +30,7 @@ const CheckInDashboard = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [isPictureMode, setIsPictureMode] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -86,6 +87,14 @@ const CheckInDashboard = () => {
             <p>{t("Daily Health Monitor")}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <label className="ci-picture-toggle">
+              <input 
+                type="checkbox" 
+                checked={isPictureMode} 
+                onChange={(e) => setIsPictureMode(e.target.checked)} 
+              />
+              🖼️ {t("Picture Mode")}
+            </label>
             <LanguageToggle />
             {user && <span className="ci-welcome">{t("Welcome")}, {user.given_name || user.name}</span>}
           </div>
@@ -100,58 +109,149 @@ const CheckInDashboard = () => {
             <h2 className="ci-card-title">{t("General Wellbeing")}</h2>
             <div className="ci-field">
               <label>{t("How are you feeling today?")}</label>
-              <select name="mood" value={form.mood} onChange={handleChange} required>
-                <option value="" disabled>{t("Select mood...")}</option>
-                {MOODS.map(m => <option key={m} value={m}>{t(m)}</option>)}
-              </select>
+              {isPictureMode ? (
+                <div className="ci-mood-emojis">
+                  {[
+                    { label: 'Great', emoji: '😁' },
+                    { label: 'Good', emoji: '🙂' },
+                    { label: 'Okay', emoji: '😐' },
+                    { label: 'Not great', emoji: '🙁' },
+                    { label: 'Poor', emoji: '🤒' }
+                  ].map(m => (
+                    <button
+                      type="button"
+                      key={m.label}
+                      className={`ci-emoji-btn ${form.mood === m.label ? 'selected' : ''}`}
+                      onClick={() => setForm(prev => ({ ...prev, mood: m.label }))}
+                      title={t(m.label)}
+                    >
+                      {m.emoji}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <select name="mood" value={form.mood} onChange={handleChange} required>
+                  <option value="" disabled>{t("Select mood...")}</option>
+                  {MOODS.map(m => <option key={m} value={m}>{t(m)}</option>)}
+                </select>
+              )}
             </div>
           </section>
 
           {/* ACTIVITY SECTION */}
           <section className="ci-card">
             <h2 className="ci-card-title">{t("Daily Activity")}</h2>
-            <div className="ci-checkbox-group">
-              <label className="ci-checkbox-label">
-                <input type="checkbox" name="hasActivity" checked={form.hasActivity} onChange={handleChange} />
-                <span className="ci-checkbox-box" />
-                {t("I was physically active today")}
-              </label>
-            </div>
-            {form.hasActivity && (
-              <div className="ci-field" style={{ marginTop: '1rem' }}>
-                <label>{t("Details")} <span className="ci-optional">{t("(e.g. 30 min walk)")}</span></label>
-                <input
-                  type="text"
-                  name="activityDetails"
-                  value={form.activityDetails}
-                  onChange={handleChange}
-                  placeholder={t("What activity did you do?")}
-                />
+            {isPictureMode ? (
+              <div className="ci-picture-grid">
+                {[
+                  { label: 'Walking', emoji: '🚶‍♂️' },
+                  { label: 'Chores', emoji: '🧹' },
+                  { label: 'Biking', emoji: '🚲' },
+                  { label: 'Resting', emoji: '🛌' }
+                ].map(act => (
+                  <button
+                    type="button"
+                    key={act.label}
+                    className={`ci-pic-btn ${form.hasActivity && form.activityDetails === act.label ? 'selected' : ''}`}
+                    onClick={() => setForm(prev => ({ ...prev, hasActivity: true, activityDetails: act.label }))}
+                  >
+                    <span className="ci-pic-emoji">{act.emoji}</span>
+                    <span className="ci-pic-label">{t(act.label)}</span>
+                  </button>
+                ))}
+                <button
+                   type="button"
+                   className={`ci-pic-btn ${!form.hasActivity ? 'selected' : ''}`}
+                   onClick={() => setForm(prev => ({ ...prev, hasActivity: false, activityDetails: '' }))}
+                >
+                   <span className="ci-pic-emoji">❌</span>
+                   <span className="ci-pic-label">{t("None")}</span>
+                </button>
               </div>
+            ) : (
+              <>
+                <div className="ci-checkbox-group">
+                  <label className="ci-checkbox-label">
+                    <input type="checkbox" name="hasActivity" checked={form.hasActivity} onChange={handleChange} />
+                    <span className="ci-checkbox-box" />
+                    {t("I was physically active today")}
+                  </label>
+                </div>
+                {form.hasActivity && (
+                  <div className="ci-field" style={{ marginTop: '1rem' }}>
+                    <label>{t("Details")} <span className="ci-optional">{t("(e.g. 30 min walk)")}</span></label>
+                    <input
+                      type="text"
+                      name="activityDetails"
+                      value={form.activityDetails}
+                      onChange={handleChange}
+                      placeholder={t("What activity did you do?")}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </section>
 
           {/* SYMPTOMS SECTION */}
           <section className="ci-card">
             <h2 className="ci-card-title">{t("Symptoms")}</h2>
-            <div className="ci-checkbox-group">
-              <label className="ci-checkbox-label">
-                <input type="checkbox" name="hasSymptoms" checked={form.hasSymptoms} onChange={handleChange} />
-                <span className="ci-checkbox-box" />
-                {t("I am experiencing symptoms today")}
-              </label>
-            </div>
-            {form.hasSymptoms && (
-              <div className="ci-field" style={{ marginTop: '1rem' }}>
-                <label>{t("Please describe your symptoms:")}</label>
-                <textarea
-                  name="symptomsText"
-                  value={form.symptomsText}
-                  onChange={handleChange}
-                  placeholder={t("e.g. Mild headache since morning, slight dizziness...")}
-                  rows={3}
-                />
+            {isPictureMode ? (
+              <div className="ci-picture-grid">
+                {[
+                  { label: 'Headache', emoji: '🤕' },
+                  { label: 'Nausea', emoji: '🤢' },
+                  { label: 'Chest Pain', emoji: '🫀' },
+                  { label: 'Muscle Aches', emoji: '🦵' },
+                  { label: 'Cough', emoji: '🤧' }
+                ].map(sym => (
+                  <button
+                    type="button"
+                    key={sym.label}
+                    className={`ci-pic-btn ${form.hasSymptoms && form.symptomsText.includes(sym.label) ? 'selected' : ''}`}
+                    onClick={() => {
+                      setForm(prev => {
+                        let newSymptoms = prev.symptomsText ? prev.symptomsText.split(', ').filter(Boolean) : [];
+                        if (newSymptoms.includes(sym.label)) {
+                          newSymptoms = newSymptoms.filter(s => s !== sym.label);
+                        } else {
+                          newSymptoms.push(sym.label);
+                        }
+                        return {
+                          ...prev,
+                          hasSymptoms: newSymptoms.length > 0,
+                          symptomsText: newSymptoms.join(', ')
+                        };
+                      });
+                    }}
+                  >
+                    <span className="ci-pic-emoji">{sym.emoji}</span>
+                    <span className="ci-pic-label">{t(sym.label)}</span>
+                  </button>
+                ))}
               </div>
+            ) : (
+              <>
+                <div className="ci-checkbox-group">
+                  <label className="ci-checkbox-label">
+                    <input type="checkbox" name="hasSymptoms" checked={form.hasSymptoms} onChange={handleChange} />
+                    <span className="ci-checkbox-box" />
+                    {t("I am experiencing symptoms today")}
+                  </label>
+                </div>
+                {form.hasSymptoms && (
+                  <div className="ci-field" style={{ marginTop: '1rem' }}>
+                    <label>{t("Please describe your symptoms:")}</label>
+                    <textarea
+                      name="symptomsText"
+                      value={form.symptomsText}
+                      onChange={handleChange}
+                      placeholder={t("e.g. Mild headache since morning, slight dizziness...")}
+                      rows={3}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </section>
 
@@ -160,14 +260,20 @@ const CheckInDashboard = () => {
             <h2 className="ci-card-title">{t("Vitals & Readings")}</h2>
             <div className="ci-fields">
               <div className="ci-field">
-                <label>{t("Blood Pressure (Systolic / Diastolic)")}</label>
+                <label>
+                  {isPictureMode && <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>💓</span>}
+                  {t("Blood Pressure (Systolic / Diastolic)")}
+                </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <input name="systolic" type="number" placeholder="120" value={form.systolic} onChange={handleChange} />
                   <input name="diastolic" type="number" placeholder="80" value={form.diastolic} onChange={handleChange} />
                 </div>
               </div>
               <div className="ci-field" style={{ marginTop: '1rem' }}>
-                <label>{t("Blood Glucose (mg/dL)")} <span className="ci-req">*</span></label>
+                <label>
+                  {isPictureMode && <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>🩸</span>}
+                  {t("Blood Glucose (mg/dL)")} <span className="ci-req">*</span>
+                </label>
                 <input name="glucose" type="number" placeholder="100" value={form.glucose} onChange={handleChange} required min="20" max="600" />
               </div>
             </div>
