@@ -6,6 +6,7 @@ import './App.css';
 // Components
 import Dashboard from './components/Dashboard/Dashboard';
 import CheckInDashboard from './components/Checkin/Checkin';
+import CheckinOptions from './components/Checkin/CheckinOptions';
 import Onboarding from './components/Onboarding/Onboarding';
 import Login from './components/Login';
 import DoctorChat from './components/DoctorChat/DoctorChat'; // <── NEW IMPORT
@@ -70,6 +71,7 @@ function App() {
 
               {/* Protected Routes */}
               <Route path="/" element={<AuthGate><Dashboard /></AuthGate>} />
+              <Route path="/checkin-options" element={<AuthGate><CheckinOptions /></AuthGate>} />
               <Route path="/checkin" element={<AuthGate><CheckInDashboard /></AuthGate>} />
               
               {/* ─── NEW DOCTOR CHAT ROUTE ─── */}

@@ -28,9 +28,12 @@ const CheckInDashboard = () => {
     notes: ''
   });
 
+  const query = new URLSearchParams(window.location.search);
+  const mode = query.get('mode');
+
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [isPictureMode, setIsPictureMode] = useState(false);
+  const [isPictureMode, setIsPictureMode] = useState(mode === 'images');
 
   // Microphone state
   const [isListening, setIsListening] = useState(false);
@@ -143,22 +146,6 @@ const CheckInDashboard = () => {
             <p>{t("Daily Health Monitor")}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <label className="ci-picture-toggle">
-              <input 
-                type="checkbox" 
-                checked={isPictureMode} 
-                onChange={(e) => setIsPictureMode(e.target.checked)} 
-              />
-              🖼️ {t("Picture Mode")}
-            </label>
-            <button 
-              type="button" 
-              onClick={toggleListening} 
-              className={`ci-btn ${isListening ? 'ci-btn--red' : 'ci-btn--blue'}`}
-              style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
-              {isListening ? '🛑 Stop Mic' : '🎤 Start Mic'}
-            </button>
             <LanguageToggle />
             {user && <span className="ci-welcome">{t("Welcome")}, {user.given_name || user.name}</span>}
           </div>
@@ -358,25 +345,37 @@ const CheckInDashboard = () => {
           </section>
 
           {/* MICROPHONE TRANSCRIPT SECTION */}
-          <section className="ci-card">
-            <h2 className="ci-card-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              🎤 {t("Voice Input (Testing)")}
-              {isListening && <span style={{ color: 'red', fontSize: '0.8rem', animation: 'pulse 1.5s infinite' }}>● Recording...</span>}
-            </h2>
-            <p className="ci-step-subtitle" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
-              {t("This section displays what the microphone hears. You can use this to verify the speech-to-text works before Eleven Labs integration.")}
-            </p>
-            <div className="ci-field">
-              <textarea
-                name="transcript"
-                value={transcript}
-                onChange={(e) => setTranscript(e.target.value)}
-                placeholder={t("Your voice input will appear here...")}
-                rows={4}
-                style={{ backgroundColor: isListening ? '#fff3f3' : '#fff' }}
-              />
-            </div>
-          </section>
+          {mode === 'speech' && (
+            <section className="ci-card">
+              <h2 className="ci-card-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  🎤 {t("Voice Input (Testing)")}
+                  {isListening && <span style={{ color: 'red', fontSize: '0.8rem', animation: 'pulse 1.5s infinite' }}>● Recording...</span>}
+                </span>
+                <button 
+                  type="button" 
+                  onClick={toggleListening} 
+                  className={`ci-btn ${isListening ? 'ci-btn--red' : 'ci-btn--blue'}`}
+                  style={{ padding: '0.4rem 0.8rem', width: 'auto', minHeight: 'auto', fontSize: '0.9rem' }}
+                >
+                  {isListening ? '🛑 Stop Mic' : '🎤 Start Mic'}
+                </button>
+              </h2>
+              <p className="ci-step-subtitle" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+                {t("This section displays what the microphone hears. You can use this to verify the speech-to-text works before Eleven Labs integration.")}
+              </p>
+              <div className="ci-field">
+                <textarea
+                  name="transcript"
+                  value={transcript}
+                  onChange={(e) => setTranscript(e.target.value)}
+                  placeholder={t("Your voice input will appear here...")}
+                  rows={4}
+                  style={{ backgroundColor: isListening ? '#fff3f3' : '#fff' }}
+                />
+              </div>
+            </section>
+          )}
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
             <button type="submit" className="ci-btn ci-btn--blue" disabled={submitting} style={{ flex: 1 }}>
