@@ -219,7 +219,18 @@ const CheckInDashboard = () => {
     };
 
     try {
-      await axios.post('http://localhost:5000/api/checkins', checkinPayload);
+      await axios.post('/api/checkins', {
+        blood_sugar: parseInt(form.glucose) || null,
+        insulin_taken: null,
+        medications_taken: null,
+        symptoms: form.hasSymptoms ? form.symptomsText : '',
+        mood: form.mood,
+        systolic: parseInt(form.systolic) || null,
+        diastolic: parseInt(form.diastolic) || null,
+        activity_done: form.hasActivity,
+        activity_details: form.activityDetails || null,
+        notes: form.notes || null,
+      });
 
       setSubmitting(false);
       setSuccess(true);
@@ -228,10 +239,7 @@ const CheckInDashboard = () => {
       setAiLoading(true);
       try {
         const aiPayload = { ...checkinPayload, transcript };
-        // Split the calls: one for voice mode, one for others
-        const endpoint = mode === 'speech' ? 'analyze-voice' : 'analyze-manual';
-        const aiRes = await axios.post(`http://localhost:5000/api/ai/${endpoint}`, aiPayload);
-
+        const aiRes = await axios.post('/api/ai/analyze', aiPayload);
         setAiInsight(aiRes.data.insight);
       } catch (aiErr) {
         console.error('AI Analysis Error:', aiErr);
