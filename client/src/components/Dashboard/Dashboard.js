@@ -92,7 +92,7 @@ const Dashboard = () => {
               <div className="card-icon card-icon--blue">📊</div>
               <h3>{t("Health Check-In")}</h3>
               <p>{t("Record your vitals, symptoms, and daily activity.")}</p>
-              <Link to="/checkin" className="btn-primary">{t("Log Today")}</Link>
+              <Link to="/checkin-options" className="btn-primary">{t("Log Today")}</Link>
             </div>
 
             {/* CARD 2: DOCTOR CHAT */}
