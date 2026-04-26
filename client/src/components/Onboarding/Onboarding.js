@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import './Onboarding.css';
+import axios from 'axios';
 
 const DISEASE_OPTIONS = [
   'Diabetes Type 1', 'Diabetes Type 2', 'Hypertension', 
@@ -73,13 +74,11 @@ const Onboarding = () => {
     };
 
     try {
-      console.log('Final Payload:', JSON.stringify(outputJSON, null, 2));
+      await axios.post('http://localhost:5000/api/patients', outputJSON.patients[0]);
       sessionStorage.setItem(`onboarded_${user?.sub}`, 'true');
       navigate('/', { replace: true });
     } catch (err) {
-      setError('Error saving profile.');
-    } finally {
-      setSubmitting(false);
+      setError('Error saving profile. Please try again.');
     }
   };
 
