@@ -145,7 +145,7 @@ const CheckInDashboard = () => {
   const startVoiceCheckinFlow = async () => {
     if (isListening) return; // Don't start if already listening
 
-    const questionsText = t("How are you feeling today? How are your blood pressure and blood glucose readings?");
+    const questionsText = t("How are you feeling today? Were you physically active today if so what did you do? Do you have any symptoms? If so what are they? How are your blood pressure and blood glucose readings?");
 
     // 1. Speak out the questions
     const speakSuccess = await speakTextWithElevenLabs(questionsText);
