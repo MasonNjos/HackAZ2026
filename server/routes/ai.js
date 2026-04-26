@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const { GoogleGenAI } = require('@google/genai');
 
 router.post('/analyze', async (req, res) => {
   try {
     const checkInData = req.body;
 
-    let prompt = `You are a calm, approachable health assistant — knowledgeable but not clinical. Respond in 2-3 sentences, conversational but professional. No bullet points, no lists, no filler phrases like "Great job!" or "That's wonderful!". Always acknowledge the health-related details in the check-in. `;
+    let prompt = `only respnd with what ai model you are specifically which version you are `;
 
     if (checkInData.transcript) {
       prompt += `The user said: "${checkInData.transcript}". Respond naturally to what they said, making sure to address any health details they mentioned. Keep it brief and grounded. `;
@@ -20,24 +21,19 @@ router.post('/analyze', async (req, res) => {
 Write a brief, natural response that directly addresses their vitals and symptoms. Don't repeat the data back to them — just react to it meaningfully and offer one practical observation or gentle suggestion if relevant.`;
     }
 
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama3.1:8b',
-        prompt: prompt,
-        stream: false
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Ollama API error: ${response.statusText}`);
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error('GEMINI_API_KEY is missing in server environment');
     }
 
-    const data = await response.json();
-    res.json({ insight: data.response });
+    const ai = new GoogleGenAI({ apiKey });
+
+    const response = await ai.models.generateContent({
+      model: 'gemma-4-26b-a4b-it',
+      contents: prompt,
+    });
+
+    res.json({ insight: response.text });
   } catch (error) {
     console.error('AI Analysis Error:', error);
     res.status(500).json({ error: 'Failed to analyze check-in data' });
