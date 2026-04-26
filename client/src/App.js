@@ -9,6 +9,7 @@ import CheckInDashboard from './components/Checkin/Checkin';
 import Onboarding from './components/Onboarding/Onboarding';
 import Login from './components/Login';
 import DoctorChat from './components/DoctorChat/DoctorChat'; // <── NEW IMPORT
+import { LanguageProvider } from './contexts/LanguageContext';
 
 // ─── THE GATEKEEPER ───
 const AuthGate = ({ children }) => {
@@ -57,23 +58,25 @@ const Auth0ProviderWithNavigate = ({ children }) => {
 
 function App() {
   return (
-    <Router>
-      <Auth0ProviderWithNavigate>
-        <div className="App">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/onboarding" element={<Onboarding />} />
+    <LanguageProvider>
+      <Router>
+        <Auth0ProviderWithNavigate>
+          <div className="App">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/onboarding" element={<Onboarding />} />
 
-            {/* Protected Routes */}
-            <Route path="/" element={<AuthGate><Dashboard /></AuthGate>} />
-            <Route path="/checkin" element={<AuthGate><CheckInDashboard /></AuthGate>} />
-            
-            {/* ─── NEW DOCTOR CHAT ROUTE ─── */}
-            <Route path="/chat" element={<AuthGate><DoctorChat /></AuthGate>} />
-          </Routes>
-        </div>
-      </Auth0ProviderWithNavigate>
-    </Router>
+              {/* Protected Routes */}
+              <Route path="/" element={<AuthGate><Dashboard /></AuthGate>} />
+              <Route path="/checkin" element={<AuthGate><CheckInDashboard /></AuthGate>} />
+              
+              {/* ─── NEW DOCTOR CHAT ROUTE ─── */}
+              <Route path="/chat" element={<AuthGate><DoctorChat /></AuthGate>} />
+            </Routes>
+          </div>
+        </Auth0ProviderWithNavigate>
+      </Router>
+    </LanguageProvider>
   );
 }
 

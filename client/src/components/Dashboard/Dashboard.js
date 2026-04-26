@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
+import LanguageToggle from '../LanguageToggle/LanguageToggle';
 
 const Dashboard = () => {
   const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
   const [localUser, setLocalUser] = useState(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const stored = localStorage.getItem('healthCreditsUser');
@@ -22,21 +25,23 @@ const Dashboard = () => {
       <header className="dashboard-header">
         <div className="header-inner">
           <div>
-            <h1>Saguaro Link</h1>
+            <h1>{t("Saguaro Link")}</h1>
           </div>
 
           {!isAuthenticated && !localUser ? (
             <div className="auth-actions">
+              <LanguageToggle />
               <button
                 className="btn-primary"
                 onClick={() => loginWithRedirect({ appState: { returnTo: window.location.pathname } })}
               >
-                Get Started
+                {t("Get Started")}
               </button>
             </div>
           ) : (
             <div className="user-actions">
-              <p className="welcome-text">Welcome, {user?.given_name || user?.name || localUser?.email}!</p>
+              <LanguageToggle />
+              <p className="welcome-text">{t("Welcome")}, {user?.given_name || user?.name || localUser?.email}!</p>
               <button
                 className="btn-secondary"
                 onClick={() => {
@@ -49,7 +54,7 @@ const Dashboard = () => {
                   }
                 }}
               >
-                 Log Out
+                 {t("Log Out")}
               </button>
             </div>
           )}
@@ -59,8 +64,8 @@ const Dashboard = () => {
       {/* ── Unauthenticated Hero ── */}
       {!isAuthenticated && !localUser && (
         <div className="hero-section">
-          <h2>Manage your health. Stay connected.</h2>
-          <p>Log your vitals, track symptoms, and stay in touch with your care team — all in one place.</p>
+          <h2>{t("Manage your health. Stay connected.")}</h2>
+          <p>{t("Log your vitals, track symptoms, and stay in touch with your care team — all in one place.")}</p>
         </div>
       )}
 
@@ -74,33 +79,33 @@ const Dashboard = () => {
             {/* CARD 1: DAILY CHECK-IN */}
             <div className="section-card">
               <div className="card-icon card-icon--blue">📊</div>
-              <h3>Health Check-In</h3>
-              <p>Record your vitals, symptoms, and daily activity.</p>
-              <Link to="/checkin" className="btn-primary">Log Today</Link>
+              <h3>{t("Health Check-In")}</h3>
+              <p>{t("Record your vitals, symptoms, and daily activity.")}</p>
+              <Link to="/checkin" className="btn-primary">{t("Log Today")}</Link>
             </div>
 
             {/* CARD 2: DOCTOR CHAT */}
             <div className="section-card">
               <div className="card-icon card-icon--green">💬</div>
-              <h3>Doctor Chat</h3>
-              <p>Directly message your care team with questions or concerns.</p>
-              <Link to="/chat" className="btn-primary">Open Chat</Link>
+              <h3>{t("Doctor Chat")}</h3>
+              <p>{t("Directly message your care team with questions or concerns.")}</p>
+              <Link to="/chat" className="btn-primary">{t("Open Chat")}</Link>
             </div>
 
             {/* CARD 3: LOG HISTORY */}
             <div className="section-card">
               <div className="card-icon card-icon--purple">📋</div>
-              <h3>My Logs</h3>
-              <p>Review your check-in history and track your health progress.</p>
-              <Link to="/history" className="btn-primary">View History</Link>
+              <h3>{t("My Logs")}</h3>
+              <p>{t("Review your check-in history and track your health progress.")}</p>
+              <Link to="/history" className="btn-primary">{t("View History")}</Link>
             </div>
 
             {/* CARD 4: REQUEST A RIDE */}
             <div className="section-card">
               <div className="card-icon card-icon--yellow">🚗</div>
-              <h3>Request a Ride</h3>
-              <p>Schedule or request transportation to your upcoming appointments.</p>
-              <Link to="/ride" className="btn-primary">Get a Ride</Link>
+              <h3>{t("Request a Ride")}</h3>
+              <p>{t("Schedule or request transportation to your upcoming appointments.")}</p>
+              <Link to="/ride" className="btn-primary">{t("Get a Ride")}</Link>
             </div>
 
           </section>
@@ -109,8 +114,8 @@ const Dashboard = () => {
           <div className="tip-box">
             <span className="tip-icon">ℹ️</span>
             <div>
-              <strong>Proactive Care</strong>
-              <p>Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.</p>
+              <strong>{t("Proactive Care")}</strong>
+              <p>{t("Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.")}</p>
             </div>
           </div>
 
