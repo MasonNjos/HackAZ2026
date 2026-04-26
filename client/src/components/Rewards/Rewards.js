@@ -23,7 +23,7 @@ const Rewards = () => {
     const fetchRewards = async () => {
         try {
             setLoading(true);
-            const res = await axios.get('http://localhost:5001/api/credits/balance');
+            const res = await axios.get('http://localhost:5000/api/credits/balance');
             setRewardsData(res.data);
             setLoading(false);
         } catch (err) {
@@ -39,7 +39,7 @@ const Rewards = () => {
         }
 
         try {
-            const res = await axios.post('http://localhost:5001/api/redeem', {
+            const res = await axios.post('http://localhost:5000/api/redeem', {
                 reward_type: type,
                 cost: cost
             });

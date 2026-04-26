@@ -17,11 +17,15 @@ User's check-in:
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama3.1:8b',
+        model: 'llama3.2',
         prompt: prompt,
         stream: false
       })
     });
+
+    if (!response.ok) {
+      throw new Error(`Ollama API error: ${response.statusText}`);
+    }
 
     const data = await response.json();
     res.json({ insight: data.response });
@@ -40,11 +44,15 @@ router.post('/analyze-voice', async (req, res) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama3.1:8b',
+        model: 'llama3.2',
         prompt: prompt,
         stream: false
       })
     });
+
+    if (!response.ok) {
+      throw new Error(`Ollama API error: ${response.statusText}`);
+    }
 
     const data = await response.json();
     res.json({ insight: data.response });
@@ -63,39 +71,47 @@ router.post('/parse', async (req, res) => {
     }
 
     const prompt = `### System:
-You are a highly accurate medical data extractor. Your task is to extract health vitals from a spoken transcript into JSON.
-CRITICAL: 
-- Look for "sugar", "glucose", or "mg/dL" for the "glucose" field.
-- Look for numbers like "120 over 80" for "systolic" and "diastolic".
-- ONLY output the JSON object. No preamble.
+You are a medical data extraction bot. Extract health metrics into JSON.
+CRITICAL RULES:
+- mood: Must be one of [Great, Good, Okay, Not great, Poor]
+- glucose: Must be a pure number (e.g., 105). If not mentioned, use 0.
+- systolic/diastolic: Must be pure numbers. If not mentioned, use 0.
+- booleans: true or false.
+
+### Examples:
+Input: "I feel okay. My sugar was 115 today."
+Output: {"mood": "Okay", "hasActivity": false, "activityDetails": "", "hasSymptoms": false, "symptomsText": "", "systolic": 0, "diastolic": 0, "glucose": 115, "notes": ""}
+
+Input: "My pressure is 130 over 85 and my glucose is 90. I'm feeling great."
+Output: {"mood": "Great", "hasActivity": false, "activityDetails": "", "hasSymptoms": false, "symptomsText": "", "systolic": 130, "diastolic": 85, "glucose": 90, "notes": ""}
 
 ### Structure:
 {
-  "mood": "one of: Great, Good, Okay, Not great, Poor",
+  "mood": "string",
   "hasActivity": boolean,
   "activityDetails": "string",
   "hasSymptoms": boolean,
   "symptomsText": "string",
-  "systolic": "number only",
-  "diastolic": "number only",
-  "glucose": "number only",
+  "systolic": number,
+  "diastolic": number,
+  "glucose": number,
   "notes": "string"
 }
 
-### User Transcript:
+### User Transcript to Parse:
 "${transcript}"`;
 
     const response = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'llama3.1:8b',
+        model: 'llama3.2',
         prompt: prompt,
         format: 'json',
         stream: false,
-        options: { 
+        options: {
           temperature: 0,
-          stop: ["###"] 
+          stop: ["###"]
         }
       })
     });
@@ -119,7 +135,7 @@ CRITICAL:
         parsedData = JSON.parse(jsonMatch[0]);
       }
     }
-    
+
     res.json(parsedData);
   } catch (error) {
     console.error('AI Parse Error:', error);
