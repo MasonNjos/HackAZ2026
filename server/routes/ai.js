@@ -11,7 +11,10 @@ function getAI() {
 router.post('/analyze-manual', async (req, res) => {
   try {
     const checkInData = req.body;
+    const { language } = req.body;
     const prompt = `You are a calm, approachable health assistant — knowledgeable but not clinical. Respond in 2-3 sentences, conversational but professional. No filler phrases like "Great job!". Always acknowledge the health-related details.
+    
+    IMPORTANT: Respond in the language specified: ${language === 'es' ? 'Spanish' : 'English'}.
 User's check-in:
 - Mood: ${checkInData.mood || 'not mentioned'}
 - Activity: ${checkInData.activity_done ? checkInData.activity_details || 'some activity' : 'no activity today'}
@@ -35,8 +38,10 @@ User's check-in:
 
 router.post('/analyze-voice', async (req, res) => {
   try {
-    const { transcript } = req.body;
-    const prompt = `You are a friendly health assistant. The user just finished a voice check-in. Respond naturally in 2-3 sentences to their voice transcript: "${transcript}". Address any health details they mentioned with empathy and a practical observation.`;
+    const { transcript, language } = req.body;
+    const prompt = `You are a friendly health assistant. The user just finished a voice check-in. Respond naturally in 2-3 sentences to their voice transcript: "${transcript}". Address any health details they mentioned with empathy and a practical observation.
+    
+    IMPORTANT: Respond in the language specified: ${language === 'es' ? 'Spanish' : 'English'}.`;
 
     const ai = getAI();
     const response = await ai.models.generateContent({
@@ -53,7 +58,7 @@ router.post('/analyze-voice', async (req, res) => {
 
 router.post('/parse', async (req, res) => {
   try {
-    const { transcript } = req.body;
+    const { transcript, language } = req.body;
 
     if (!transcript) {
       return res.status(400).json({ error: 'No transcript provided' });
@@ -61,6 +66,7 @@ router.post('/parse', async (req, res) => {
 
     const prompt = `### System:
 You are a medical data extraction bot. Extract health metrics into JSON.
+The input transcript is in ${language === 'es' ? 'Spanish' : 'English'}.
 CRITICAL RULES:
 - mood: Must be one of [Great, Good, Okay, Not great, Poor]
 - glucose: Must be a pure number (e.g., 105). If not mentioned, use 0.

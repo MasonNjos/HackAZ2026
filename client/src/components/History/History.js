@@ -8,7 +8,7 @@ const History = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const History = () => {
                 <div key={log.id || index} className="history-card">
                   <div className="history-card-header">
                     <div className="history-date">
-                      {new Date(log.checkin_date).toLocaleDateString(undefined, {
+                      {new Date(log.checkin_date).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',

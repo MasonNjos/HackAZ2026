@@ -1,21 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './DoctorChat.css';
 
 const DoctorChat = () => {
   const { user } = useAuth0();
+  const { t } = useLanguage();
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: 'doctor',
-      text: "Hello! I saw your glucose readings from this morning. How are you feeling?",
+      text: t("Hello! I saw your glucose readings from this morning. How are you feeling?"),
       time: '10:30 AM'
     },
     {
       id: 2,
       sender: 'patient',
-      text: "I'm feeling okay, just a bit tired. I think my blood pressure was a little high too.",
+      text: t("I'm feeling okay, just a bit tired. I think my blood pressure was a little high too."),
       time: '10:35 AM'
     }
   ]);
@@ -46,7 +48,7 @@ const DoctorChat = () => {
       const docResponse = {
         id: Date.now() + 1,
         sender: 'doctor',
-        text: "Thank you for letting me know. Keep monitoring it and let's check in again tomorrow morning.",
+        text: t("Thank you for letting me know. Keep monitoring it and let's check in again tomorrow morning."),
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages(prev => [...prev, docResponse]);
@@ -57,10 +59,10 @@ const DoctorChat = () => {
     <div className="chat-page">
       <header className="chat-header">
         <div className="chat-header-inner">
-          <Link to="/" className="chat-back-btn">← Back</Link>
+          <Link to="/" className="chat-back-btn">← {t("Back")}</Link>
           <div className="chat-dr-info">
-            <h1>Saguaro Link</h1>
-            <p>Chatting with: <strong>Dr. Arispe</strong></p>
+            <h1>{t("Saguaro Link")}</h1>
+            <p>{t("Chatting with: ")}<strong>{t("Dr. Arispe")}</strong></p>
           </div>
         </div>
       </header>
@@ -81,11 +83,11 @@ const DoctorChat = () => {
         <form className="chat-input-area" onSubmit={handleSend}>
           <input
             type="text"
-            placeholder="Type a message to your doctor..."
+            placeholder={t("Type a message to your doctor...")}
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
-          <button type="submit" className="chat-send-btn">Send</button>
+          <button type="submit" className="chat-send-btn">{t("Send")}</button>
         </form>
       </main>
     </div>

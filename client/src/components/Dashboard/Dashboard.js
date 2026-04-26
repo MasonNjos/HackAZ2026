@@ -11,7 +11,7 @@ const Dashboard = () => {
   const [localUser, setLocalUser] = useState(null);
   const [rides, setRides] = useState([]);
   const [rewardsData, setRewardsData] = useState(null);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     const stored = localStorage.getItem('healthCreditsUser');
@@ -32,7 +32,7 @@ const Dashboard = () => {
     }
   }, [isAuthenticated, localUser]);
 
-  if (isLoading) return <div style={{ textAlign: 'center', padding: '2rem', fontFamily: 'Arial, sans-serif' }}>Loading...</div>;
+  if (isLoading) return <div style={{ textAlign: 'center', padding: '2rem', fontFamily: 'Arial, sans-serif' }}>{t("Loading...")}</div>;
 
   return (
     <div className="dashboard">
@@ -153,7 +153,7 @@ const Dashboard = () => {
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <strong style={{ display: 'block', color: '#7a4f00' }}>
-                        {new Date(ride.date).toLocaleDateString()}
+                        {new Date(ride.date).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US')}
                       </strong>
                       <span style={{ fontSize: '0.85rem', color: '#555' }}>
                         {ride.time.slice(0, 5)} {ride.wheelchair ? '♿' : ''}

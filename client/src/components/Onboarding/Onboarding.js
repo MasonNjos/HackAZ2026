@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './Onboarding.css';
 import axios from 'axios';
 
@@ -13,6 +14,7 @@ const DISEASE_OPTIONS = [
 const Onboarding = () => {
   const { user } = useAuth0();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -78,15 +80,15 @@ const Onboarding = () => {
       sessionStorage.setItem(`onboarded_${user?.sub}`, 'true');
       navigate('/', { replace: true });
     } catch (err) {
-      setError('Error saving profile. Please try again.');
+      setError(t('Error saving profile. Please try again.'));
     }
   };
 
   return (
     <div className="ob-page">
       <header className="ob-header">
-        <h1>Saguaro Link</h1>
-        <p>Comprehensive Health Enrollment</p>
+        <h1>{t("Saguaro Link")}</h1>
+        <p>{t("Comprehensive Health Enrollment")}</p>
       </header>
 
       <main className="ob-main">
@@ -94,24 +96,24 @@ const Onboarding = () => {
 
           {/* SECTION 1: Personal Information */}
           <div className="ob-card" style={{ marginBottom: '1.25rem' }}>
-            <h2 className="ob-step-title">Personal Information</h2>
+            <h2 className="ob-step-title">{t("Personal Information")}</h2>
             <div className="ob-fields">
               <div className="ob-field">
-                <label>Full Name <span className="ob-req">*</span></label>
+                <label>{t("Full Name")} <span className="ob-req">*</span></label>
                 <input name="name" type="text" onChange={handleChange} placeholder="Maria Garcia" required />
               </div>
 
               <div className="ob-row2">
                 <div className="ob-field">
-                  <label>Sex <span className="ob-req">*</span></label>
+                  <label>{t("Sex")} <span className="ob-req">*</span></label>
                   <select name="sex" onChange={handleChange} required>
-                    <option value="">Select...</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
+                    <option value="">{t("Select...")}</option>
+                    <option value="Male">{t("Male")}</option>
+                    <option value="Female">{t("Female")}</option>
                   </select>
                 </div>
                 <div className="ob-field">
-                  <label>Date of Birth <span className="ob-req">*</span></label>
+                  <label>{t("Date of Birth")} <span className="ob-req">*</span></label>
                   <input name="date_of_birth" type="date" onChange={handleChange} required />
                 </div>
               </div>
@@ -119,11 +121,11 @@ const Onboarding = () => {
               {/* RESTORED: Height and Weight */}
               <div className="ob-row2">
                 <div className="ob-field">
-                  <label>Height (inches)</label>
+                  <label>{t("Height (inches)")}</label>
                   <input name="height_in" type="number" value={form.height_in} onChange={handleChange} placeholder="e.g. 65" />
                 </div>
                 <div className="ob-field">
-                  <label>Weight (lbs)</label>
+                  <label>{t("Weight (lbs)")}</label>
                   <input name="weight_lbs" type="number" value={form.weight_lbs} onChange={handleChange} placeholder="e.g. 150" />
                 </div>
               </div>
@@ -132,8 +134,8 @@ const Onboarding = () => {
 
           {/* SECTION 2: Medical History */}
           <div className="ob-card" style={{ marginBottom: '1.25rem' }}>
-            <h2 className="ob-step-title">Medical History</h2>
-            <p className="ob-step-subtitle">Check all that apply to you:</p>
+            <h2 className="ob-step-title">{t("Medical History")}</h2>
+            <p className="ob-step-subtitle">{t("Check all that apply to you:")}</p>
             <div className="ob-goals-grid">
               {DISEASE_OPTIONS.map((disease) => (
                 <button
@@ -143,7 +145,7 @@ const Onboarding = () => {
                   onClick={() => handleDiseaseToggle(disease)}
                 >
                   {form.diseases.includes(disease) && <span className="ob-goal-check">✓ </span>}
-                  {disease}
+                  {t(disease)}
                 </button>
               ))}
             </div>
@@ -151,7 +153,7 @@ const Onboarding = () => {
 
           {/* SECTION 3: Lifestyle & Habits */}
           <div className="ob-card">
-            <h2 className="ob-step-title">Lifestyle & Habits</h2>
+            <h2 className="ob-step-title">{t("Lifestyle & Habits")}</h2>
             <div className="ob-fields">
 
               {/* Tobacco frequency check */}
@@ -164,12 +166,12 @@ const Onboarding = () => {
                     onChange={handleChange}
                     style={{ width: '20px', height: '20px' }}
                   />
-                  <span>I use tobacco or vaping products</span>
+                  <span>{t("I use tobacco or vaping products")}</span>
                 </label>
 
                 {form.has_tobacco && (
                   <div style={{ marginTop: '10px', paddingLeft: '30px' }}>
-                    <label style={{ fontSize: '0.85rem' }}>Times per week:</label>
+                    <label style={{ fontSize: '0.85rem' }}>{t("Times per week:")}</label>
                     <input
                       name="tobacco_vaping_per_week"
                       type="number"
@@ -191,12 +193,12 @@ const Onboarding = () => {
                     onChange={handleChange}
                     style={{ width: '20px', height: '20px' }}
                   />
-                  <span>I consume alcohol</span>
+                  <span>{t("I consume alcohol")}</span>
                 </label>
 
                 {form.has_alcohol && (
                   <div style={{ marginTop: '10px', paddingLeft: '30px' }}>
-                    <label style={{ fontSize: '0.85rem' }}>Times per week:</label>
+                    <label style={{ fontSize: '0.85rem' }}>{t("Times per week:")}</label>
                     <input
                       name="drinking_times_per_week"
                       type="number"
@@ -215,7 +217,7 @@ const Onboarding = () => {
 
           <div className="ob-nav">
             <button type="submit" className="ob-btn ob-btn--submit" disabled={submitting}>
-              {submitting ? 'Saving...' : 'Complete Enrollment'}
+              {submitting ? t('Saving...') : t('Complete Enrollment')}
             </button>
           </div>
         </form>
