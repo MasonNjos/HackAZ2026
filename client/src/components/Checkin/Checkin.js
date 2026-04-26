@@ -28,18 +28,11 @@ const CheckInDashboard = () => {
     notes: ''
   });
 
-  const query = new URLSearchParams(window.location.search);
-  const mode = query.get('mode');
-
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-<<<<<<< HEAD
-  const [isPictureMode, setIsPictureMode] = useState(mode === 'images');
-=======
   const [isPictureMode, setIsPictureMode] = useState(false);
   const [aiInsight, setAiInsight] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
->>>>>>> 6dcda48f03215b7a98c9d19b2e1bccad15d05ef9
 
   // Microphone state
   const [isListening, setIsListening] = useState(false);
@@ -129,9 +122,36 @@ const CheckInDashboard = () => {
 
     try {
       await axios.post('/api/checkins', checkinPayload); // relative URL leverages proxy
+    const checkinPayload = {
+      blood_sugar: parseInt(form.glucose) || null,
+      insulin_taken: null,
+      medications_taken: null,
+      symptoms: form.hasSymptoms ? form.symptomsText : '',
+      mood: form.mood,
+      systolic: parseInt(form.systolic) || null,
+      diastolic: parseInt(form.diastolic) || null,
+      activity_done: form.hasActivity,
+      activity_details: form.activityDetails || null,
+      notes: form.notes || null,
+    };
+
+    try {
+      await axios.post('/api/checkins', checkinPayload); // relative URL leverages proxy
 
       setSubmitting(false);
       setSuccess(true);
+
+      // Call AI to analyze
+      setAiLoading(true);
+      try {
+        const aiRes = await axios.post('/api/ai/analyze', checkinPayload);
+        setAiInsight(aiRes.data.insight);
+      } catch (aiErr) {
+        console.error('AI Analysis Error:', aiErr);
+        setAiInsight(t('Could not generate AI insight at this time.'));
+      } finally {
+        setAiLoading(false);
+      }
 
       // Call AI to analyze
       setAiLoading(true);
@@ -166,6 +186,22 @@ const CheckInDashboard = () => {
             <p>{t("Daily Health Monitor")}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <label className="ci-picture-toggle">
+              <input 
+                type="checkbox" 
+                checked={isPictureMode} 
+                onChange={(e) => setIsPictureMode(e.target.checked)} 
+              />
+              🖼️ {t("Picture Mode")}
+            </label>
+            <button 
+              type="button" 
+              onClick={toggleListening} 
+              className={`ci-btn ${isListening ? 'ci-btn--red' : 'ci-btn--blue'}`}
+              style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              {isListening ? '🛑 Stop Mic' : '🎤 Start Mic'}
+            </button>
             <LanguageToggle />
             {user && <span className="ci-welcome">{t("Welcome")}, {user.given_name || user.name}</span>}
           </div>
@@ -365,37 +401,25 @@ const CheckInDashboard = () => {
           </section>
 
           {/* MICROPHONE TRANSCRIPT SECTION */}
-          {mode === 'speech' && (
-            <section className="ci-card">
-              <h2 className="ci-card-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  🎤 {t("Voice Input (Testing)")}
-                  {isListening && <span style={{ color: 'red', fontSize: '0.8rem', animation: 'pulse 1.5s infinite' }}>● Recording...</span>}
-                </span>
-                <button 
-                  type="button" 
-                  onClick={toggleListening} 
-                  className={`ci-btn ${isListening ? 'ci-btn--red' : 'ci-btn--blue'}`}
-                  style={{ padding: '0.4rem 0.8rem', width: 'auto', minHeight: 'auto', fontSize: '0.9rem' }}
-                >
-                  {isListening ? '🛑 Stop Mic' : '🎤 Start Mic'}
-                </button>
-              </h2>
-              <p className="ci-step-subtitle" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
-                {t("This section displays what the microphone hears. You can use this to verify the speech-to-text works before Eleven Labs integration.")}
-              </p>
-              <div className="ci-field">
-                <textarea
-                  name="transcript"
-                  value={transcript}
-                  onChange={(e) => setTranscript(e.target.value)}
-                  placeholder={t("Your voice input will appear here...")}
-                  rows={4}
-                  style={{ backgroundColor: isListening ? '#fff3f3' : '#fff' }}
-                />
-              </div>
-            </section>
-          )}
+          <section className="ci-card">
+            <h2 className="ci-card-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              🎤 {t("Voice Input (Testing)")}
+              {isListening && <span style={{ color: 'red', fontSize: '0.8rem', animation: 'pulse 1.5s infinite' }}>● Recording...</span>}
+            </h2>
+            <p className="ci-step-subtitle" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+              {t("This section displays what the microphone hears. You can use this to verify the speech-to-text works before Eleven Labs integration.")}
+            </p>
+            <div className="ci-field">
+              <textarea
+                name="transcript"
+                value={transcript}
+                onChange={(e) => setTranscript(e.target.value)}
+                placeholder={t("Your voice input will appear here...")}
+                rows={4}
+                style={{ backgroundColor: isListening ? '#fff3f3' : '#fff' }}
+              />
+            </div>
+          </section>
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
             <button type="submit" className="ci-btn ci-btn--blue" disabled={submitting} style={{ flex: 1 }}>
@@ -412,6 +436,25 @@ const CheckInDashboard = () => {
           </div>
 
           {success && <p className="ci-success" style={{ textAlign: 'center' }}>{t("✓ Check-in saved successfully!")}</p>}
+
+          {/* AI Response Box */}
+          {(aiLoading || aiInsight) && (
+            <section className="ci-card" style={{ marginTop: '1rem', background: '#eaf4fc', borderColor: '#3B82C4' }}>
+              <h2 className="ci-card-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottomColor: '#b6d4fe' }}>
+                🤖 {t("Health Assistant Insight")}
+              </h2>
+              <div className="ci-field" style={{ padding: '0.5rem 0' }}>
+                {aiLoading ? (
+                  <p style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#555' }}>
+                    <span style={{ display: 'inline-block', animation: 'spin 2s linear infinite' }}>⏳</span>
+                    {t("Analyzing your daily check-in...")}
+                  </p>
+                ) : (
+                  <p style={{ fontSize: '1rem', lineHeight: '1.5' }}>{aiInsight}</p>
+                )}
+              </div>
+            </section>
+          )}
 
           {/* AI Response Box */}
           {(aiLoading || aiInsight) && (
