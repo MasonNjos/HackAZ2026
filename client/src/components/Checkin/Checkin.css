@@ -201,6 +201,7 @@
 
 .ci-btn--blue  { background: #3B82C4; }
 .ci-btn--green { background: #3BB87A; }
+.ci-btn--red   { background: #E24B4A; }
 
 /* ── Status messages ── */
 .ci-success {

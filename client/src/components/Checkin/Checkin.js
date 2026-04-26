@@ -32,6 +32,62 @@ const CheckInDashboard = () => {
   const [success, setSuccess] = useState(false);
   const [isPictureMode, setIsPictureMode] = useState(false);
 
+  // Microphone state
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState('');
+
+  const toggleListening = () => {
+    if (isListening) {
+      if (window.recognitionInstance) {
+        window.recognitionInstance.stop();
+      }
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Your browser does not support the Web Speech API.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    
+    let currentFinalTranscript = transcript;
+
+    recognition.onstart = () => setIsListening(true);
+    
+    recognition.onresult = (event) => {
+      let interimTranscript = '';
+      let finalUpdate = '';
+      
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalUpdate += event.results[i][0].transcript + ' ';
+        } else {
+          interimTranscript += event.results[i][0].transcript;
+        }
+      }
+      
+      if (finalUpdate) {
+        currentFinalTranscript += finalUpdate;
+      }
+      setTranscript(currentFinalTranscript + interimTranscript);
+    };
+    
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error", event.error);
+      setIsListening(false);
+    };
+    
+    recognition.onend = () => setIsListening(false);
+    
+    recognition.start();
+    window.recognitionInstance = recognition;
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm(prev => {
@@ -50,7 +106,7 @@ const CheckInDashboard = () => {
     setSubmitting(true);
 
     try {
-      await axios.post('http://localhost:5001/api/checkins', {
+      await axios.post('http://localhost:5000/api/checkins', {
         blood_sugar: parseInt(form.glucose) || null,
         insulin_taken: null,
         medications_taken: null,
@@ -95,6 +151,14 @@ const CheckInDashboard = () => {
               />
               🖼️ {t("Picture Mode")}
             </label>
+            <button 
+              type="button" 
+              onClick={toggleListening} 
+              className={`ci-btn ${isListening ? 'ci-btn--red' : 'ci-btn--blue'}`}
+              style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              {isListening ? '🛑 Stop Mic' : '🎤 Start Mic'}
+            </button>
             <LanguageToggle />
             {user && <span className="ci-welcome">{t("Welcome")}, {user.given_name || user.name}</span>}
           </div>
@@ -289,6 +353,27 @@ const CheckInDashboard = () => {
                 onChange={handleChange}
                 placeholder={t("Any other observations or concerns...")}
                 rows={3}
+              />
+            </div>
+          </section>
+
+          {/* MICROPHONE TRANSCRIPT SECTION */}
+          <section className="ci-card">
+            <h2 className="ci-card-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              🎤 {t("Voice Input (Testing)")}
+              {isListening && <span style={{ color: 'red', fontSize: '0.8rem', animation: 'pulse 1.5s infinite' }}>● Recording...</span>}
+            </h2>
+            <p className="ci-step-subtitle" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+              {t("This section displays what the microphone hears. You can use this to verify the speech-to-text works before Eleven Labs integration.")}
+            </p>
+            <div className="ci-field">
+              <textarea
+                name="transcript"
+                value={transcript}
+                onChange={(e) => setTranscript(e.target.value)}
+                placeholder={t("Your voice input will appear here...")}
+                rows={4}
+                style={{ backgroundColor: isListening ? '#fff3f3' : '#fff' }}
               />
             </div>
           </section>
