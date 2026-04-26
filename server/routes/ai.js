@@ -26,7 +26,7 @@ Write a brief, natural response that directly addresses their vitals and symptom
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3.2',
+        model: 'llama3.1:8b',
         prompt: prompt,
         stream: false
       })

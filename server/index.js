@@ -4,7 +4,7 @@ require('dotenv').config();
 const { pool } = require('./db/pool');
 const { optionalAuth0 } = require('./middleware/auth0Optional');
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 // Middleware
 const corsOrigin = process.env.CORS_ORIGIN;
 app.use(

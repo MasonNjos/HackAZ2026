@@ -93,6 +93,68 @@ const CheckInDashboard = () => {
     window.recognitionInstance = recognition;
   };
 
+  // ElevenLabs API Integration Placeholder
+  const speakTextWithElevenLabs = async (text) => {
+    // TODO: Insert your ElevenLabs API Key here
+    const ELEVEN_LABS_API_KEY = process.env.REACT_APP_ELEVEN_LABS_API_KEY || 'YOUR_ELEVEN_LABS_API_KEY_HERE';
+    const VOICE_ID = '21m00Tcm4TlvDq8ikWAM'; // Example Voice ID (Rachel)
+
+    if (!ELEVEN_LABS_API_KEY || ELEVEN_LABS_API_KEY === 'YOUR_ELEVEN_LABS_API_KEY_HERE') {
+      alert(t("Please configure your ElevenLabs API Key in the code first."));
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
+        method: 'POST',
+        headers: {
+          'xi-api-key': ELEVEN_LABS_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: text,
+          model_id: 'eleven_turbo_v2', // Extremely stable fast model
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.5
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`ElevenLabs API returned ${response.status}: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+
+      return new Promise((resolve) => {
+        audio.onended = () => resolve(true);
+        audio.onerror = () => resolve(false);
+        audio.play();
+      });
+    } catch (error) {
+      console.error('Error with ElevenLabs API:', error);
+      alert(t("Error communicating with ElevenLabs API. Please check your API Key and character limits."));
+      return false;
+    }
+  };
+
+  const startVoiceCheckinFlow = async () => {
+    if (isListening) return; // Don't start if already listening
+
+    const questionsText = t("How are you feeling today? How are your blood pressure and blood glucose readings?");
+
+    // 1. Speak out the questions
+    const speakSuccess = await speakTextWithElevenLabs(questionsText);
+
+    // 2. Only start mic if speech was successful
+    if (speakSuccess) {
+      toggleListening();
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm(prev => {
@@ -124,7 +186,7 @@ const CheckInDashboard = () => {
     };
 
     try {
-      await axios.post('http://localhost:5000/api/checkins', checkinPayload);
+      await axios.post('http://localhost:5001/api/checkins', checkinPayload);
 
       setSubmitting(false);
       setSuccess(true);
@@ -133,7 +195,7 @@ const CheckInDashboard = () => {
       setAiLoading(true);
       try {
         const aiPayload = { ...checkinPayload, transcript };
-        const aiRes = await axios.post('http://localhost:5000/api/ai/analyze', aiPayload);
+        const aiRes = await axios.post('http://localhost:5001/api/ai/analyze', aiPayload);
         setAiInsight(aiRes.data.insight);
       } catch (aiErr) {
         console.error('AI Analysis Error:', aiErr);
@@ -366,20 +428,30 @@ const CheckInDashboard = () => {
             <section className="ci-card">
               <h2 className="ci-card-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  🎤 {t("Voice Input (Testing)")}
+                  🎤 {t("Voice Input")}
                   {isListening && <span style={{ color: 'red', fontSize: '0.8rem', animation: 'pulse 1.5s infinite' }}>● Recording...</span>}
                 </span>
-                <button
-                  type="button"
-                  onClick={toggleListening}
-                  className={`ci-btn ${isListening ? 'ci-btn--red' : 'ci-btn--blue'}`}
-                  style={{ padding: '0.4rem 0.8rem', width: 'auto', minHeight: 'auto', fontSize: '0.9rem' }}
-                >
-                  {isListening ? '🛑 Stop Mic' : '🎤 Start Mic'}
-                </button>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    type="button"
+                    onClick={startVoiceCheckinFlow}
+                    className="ci-btn ci-btn--blue"
+                    style={{ padding: '0.4rem 0.8rem', width: 'auto', minHeight: 'auto', fontSize: '0.9rem' }}
+                  >
+                    {t("Start Interactive Voice Check-in")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggleListening}
+                    className={`ci-btn ${isListening ? 'ci-btn--red' : 'ci-btn--blue'}`}
+                    style={{ padding: '0.4rem 0.8rem', width: 'auto', minHeight: 'auto', fontSize: '0.9rem' }}
+                  >
+                    {isListening ? '🛑 Stop Mic' : '🎤 Start Mic'}
+                  </button>
+                </div>
               </h2>
               <p className="ci-step-subtitle" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
-                {t("This section displays what the microphone hears. You can use this to verify the speech-to-text works before Eleven Labs integration.")}
+                {t("Click 'Start Interactive Voice Check-in' to hear the questions. The microphone will start automatically after the questions are read. You can manually stop it when you're done.")}
               </p>
               <div className="ci-field">
                 <textarea

@@ -16,7 +16,7 @@ const History = () => {
     window.scrollTo(0, 0);
 
     // Fetch checkins history
-    axios.get('http://localhost:5000/api/checkins')
+    axios.get('http://localhost:5001/api/checkins')
       .then(res => {
         setLogs(res.data);
         setLoading(false);
