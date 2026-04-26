@@ -60,7 +60,7 @@ const RequestRide = () => {
   return (
     <div className="rr-page">
       <header className="rr-header">
-        <button 
+        <button
           onClick={() => navigate('/')}
           className="rr-back-btn rr-back-btn--corner"
           title={t("Go back")}
