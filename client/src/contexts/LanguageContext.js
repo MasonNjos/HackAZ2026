@@ -1,0 +1,136 @@
+import React, { createContext, useState, useContext } from 'react';
+
+export const LanguageContext = createContext();
+
+const translations = {
+  en: {
+    "Saguaro Link": "Saguaro Link",
+    "Welcome": "Welcome",
+    "Get Started": "Get Started",
+    "Log Out": "Log Out",
+    "Manage your health. Stay connected.": "Manage your health. Stay connected.",
+    "Log your vitals, track symptoms, and stay in touch with your care team — all in one place.": "Log your vitals, track symptoms, and stay in touch with your care team — all in one place.",
+    "Health Check-In": "Health Check-In",
+    "Record your vitals, symptoms, and daily activity.": "Record your vitals, symptoms, and daily activity.",
+    "Log Today": "Log Today",
+    "Doctor Chat": "Doctor Chat",
+    "Directly message your care team with questions or concerns.": "Directly message your care team with questions or concerns.",
+    "Open Chat": "Open Chat",
+    "My Logs": "My Logs",
+    "Review your check-in history and track your health progress.": "Review your check-in history and track your health progress.",
+    "View History": "View History",
+    "Request a Ride": "Request a Ride",
+    "Schedule or request transportation to your upcoming appointments.": "Schedule or request transportation to your upcoming appointments.",
+    "Get a Ride": "Get a Ride",
+    "Proactive Care": "Proactive Care",
+    "Daily Health Monitor": "Daily Health Monitor",
+    "General Wellbeing": "General Wellbeing",
+    "How are you feeling today?": "How are you feeling today?",
+    "Select mood...": "Select mood...",
+    "Great": "Great",
+    "Good": "Good",
+    "Okay": "Okay",
+    "Not great": "Not great",
+    "Poor": "Poor",
+    "Daily Activity": "Daily Activity",
+    "I was physically active today": "I was physically active today",
+    "Symptoms": "Symptoms",
+    "I am experiencing symptoms today": "I am experiencing symptoms today",
+    "Vitals & Readings": "Vitals & Readings",
+    "Additional Notes": "Additional Notes",
+    "Save Daily Check-In": "Save Daily Check-In",
+    "Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.": "Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.",
+    "Log In": "Log In",
+    "Sign Up": "Sign Up",
+    "Take Control of Your Health": "Take Control of Your Health",
+    "Track your daily health, monitor symptoms, and share insights with your care team—all in one place. Join Saguaro Link today and start your journey towards better health management.": "Track your daily health, monitor symptoms, and share insights with your care team—all in one place. Join Saguaro Link today and start your journey towards better health management.",
+    "Get Started Today": "Get Started Today",
+    "Explore Banner Health": "Explore Banner Health",
+    "Banner Health Resources": "Banner Health Resources",
+    "Quick links to services and patient tools from Banner Health.": "Quick links to services and patient tools from Banner Health.",
+    "Banner Health Services": "Banner Health Services",
+    "Browse core care options like primary care, urgent care, imaging, surgery, and specialty medicine.": "Browse core care options like primary care, urgent care, imaging, surgery, and specialty medicine.",
+    "Patients & Visitors": "Patients & Visitors",
+    "Find patient tools such as billing, medical records, the Banner app, symptom checker, and more.": "Find patient tools such as billing, medical records, the Banner app, symptom checker, and more.",
+    "Patient Account": "Patient Account",
+    "Manage appointments, view records, message your care team, and request prescription renewals.": "Manage appointments, view records, message your care team, and request prescription renewals.",
+    "Health & Wellness": "Health & Wellness",
+    "Explore education, health checks, support groups, and prevention resources from Banner Health.": "Explore education, health checks, support groups, and prevention resources from Banner Health.",
+    "Open Banner Health": "Open Banner Health"
+  },
+  es: {
+    "Saguaro Link": "Saguaro Link",
+    "Welcome": "Bienvenido",
+    "Get Started": "Empezar",
+    "Log Out": "Cerrar sesión",
+    "Manage your health. Stay connected.": "Maneja tu salud. Mantente conectado.",
+    "Log your vitals, track symptoms, and stay in touch with your care team — all in one place.": "Registra tus signos vitales, síntomas y mantente en contacto con tu equipo de salud, todo en un solo lugar.",
+    "Health Check-In": "Chequeo de Salud",
+    "Record your vitals, symptoms, and daily activity.": "Registra tus signos vitales, síntomas y actividad diaria.",
+    "Log Today": "Registrar Hoy",
+    "Doctor Chat": "Chat con Médico",
+    "Directly message your care team with questions or concerns.": "Envía mensajes a tu equipo médico con preguntas o inquietudes.",
+    "Open Chat": "Abrir Chat",
+    "My Logs": "Mis Registros",
+    "Review your check-in history and track your health progress.": "Revisa tu historial y sigue el progreso de tu salud.",
+    "View History": "Ver Historial",
+    "Request a Ride": "Pedir Transporte",
+    "Schedule or request transportation to your upcoming appointments.": "Programa o pide transporte para tus próximas citas.",
+    "Get a Ride": "Pedir un Viaje",
+    "Proactive Care": "Cuidado Proactivo",
+    "Daily Health Monitor": "Monitor de Salud Diario",
+    "General Wellbeing": "Bienestar General",
+    "How are you feeling today?": "¿Cómo te sientes hoy?",
+    "Select mood...": "Seleccionar estado...",
+    "Great": "Excelente",
+    "Good": "Bien",
+    "Okay": "Regular",
+    "Not great": "No muy bien",
+    "Poor": "Mal",
+    "Daily Activity": "Actividad Diaria",
+    "I was physically active today": "Estuve físicamente activo hoy",
+    "Symptoms": "Síntomas",
+    "I am experiencing symptoms today": "Tengo síntomas hoy",
+    "Vitals & Readings": "Signos Vitales",
+    "Additional Notes": "Notas Adicionales",
+    "Save Daily Check-In": "Guardar Chequeo Diario",
+    "Consistent tracking helps Saguaro Link identify patterns and helps you manage your health more effectively.": "El seguimiento constante ayuda a identificar patrones y a manejar tu salud más eficazmente.",
+    "Log In": "Iniciar sesión",
+    "Sign Up": "Regístrate",
+    "Take Control of Your Health": "Toma Control de tu Salud",
+    "Track your daily health, monitor symptoms, and share insights with your care team—all in one place. Join Saguaro Link today and start your journey towards better health management.": "Registra tu salud diaria, monitorea síntomas y comparte información con tu equipo médico—todo en un solo lugar. Únete a Saguaro Link hoy y comienza tu camino hacia un mejor manejo de tu salud.",
+    "Get Started Today": "Empieza Hoy",
+    "Explore Banner Health": "Explorar Banner Health",
+    "Banner Health Resources": "Recursos de Banner Health",
+    "Quick links to services and patient tools from Banner Health.": "Enlaces rápidos a servicios y herramientas para pacientes de Banner Health.",
+    "Banner Health Services": "Servicios de Banner Health",
+    "Browse core care options like primary care, urgent care, imaging, surgery, and specialty medicine.": "Navega por opciones de atención primaria, atención de urgencia, imágenes, cirugía y medicina especializada.",
+    "Patients & Visitors": "Pacientes y Visitantes",
+    "Find patient tools such as billing, medical records, the Banner app, symptom checker, and more.": "Encuentra herramientas para pacientes como facturación, registros médicos, la aplicación de Banner, evaluador de síntomas y más.",
+    "Patient Account": "Cuenta del Paciente",
+    "Manage appointments, view records, message your care team, and request prescription renewals.": "Administra citas, ve registros, envía mensajes a tu equipo de salud y solicita renovaciones de recetas.",
+    "Health & Wellness": "Salud y Bienestar",
+    "Explore education, health checks, support groups, and prevention resources from Banner Health.": "Explora recursos de educación, chequeos de salud, grupos de apoyo y prevención de Banner Health.",
+    "Open Banner Health": "Abrir Banner Health"
+  }
+};
+
+export const LanguageProvider = ({ children }) => {
+  const [language, setLanguage] = useState('en');
+
+  const t = (key) => {
+    return translations[language]?.[key] || key;
+  };
+
+  const toggleLanguage = () => {
+    setLanguage((prev) => (prev === 'en' ? 'es' : 'en'));
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, toggleLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = () => useContext(LanguageContext);
