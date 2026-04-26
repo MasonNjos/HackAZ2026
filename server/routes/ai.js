@@ -44,4 +44,61 @@ Write a brief, natural response that directly addresses their vitals and symptom
   }
 });
 
+router.post('/parse', async (req, res) => {
+  try {
+    const { transcript } = req.body;
+    
+    if (!transcript) {
+      return res.status(400).json({ error: 'No transcript provided' });
+    }
+
+    const prompt = `You are a medical data extractor. You must extract the following information from the user's spoken check-in and output ONLY valid JSON.
+Extract this exact JSON structure (fill in with the extracted data, leave as empty strings or false if not mentioned):
+{
+  "mood": "string (e.g., 'Great', 'Good', 'Okay', 'Not great', 'Poor', or empty)",
+  "hasActivity": boolean,
+  "activityDetails": "string or empty",
+  "hasSymptoms": boolean,
+  "symptomsText": "string or empty",
+  "systolic": "string number or empty",
+  "diastolic": "string number or empty",
+  "glucose": "string number or empty",
+  "notes": "any extra context or empty"
+}
+
+User's spoken check-in: "${transcript}"`;
+
+    const response = await fetch('http://localhost:11434/api/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama3.1:8b',
+        prompt: prompt,
+        format: 'json',
+        stream: false
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Ollama API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    let parsedData = {};
+    try {
+      parsedData = JSON.parse(data.response);
+    } catch (parseErr) {
+      console.error('Failed to parse AI JSON output:', parseErr);
+      parsedData = {};
+    }
+    
+    res.json(parsedData);
+  } catch (error) {
+    console.error('AI Parse Error:', error);
+    res.status(500).json({ error: 'Failed to parse transcript' });
+  }
+});
+
 module.exports = router;

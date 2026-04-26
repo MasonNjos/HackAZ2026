@@ -116,7 +116,8 @@ const CheckInDashboard = () => {
           model_id: 'eleven_turbo_v2', // Extremely stable fast model
           voice_settings: {
             stability: 0.5,
-            similarity_boost: 0.5
+            similarity_boost: 0.5,
+            speed: 0.8 // Slower speed (Range: 0.7 to 1.2)
           }
         })
       });
@@ -172,17 +173,37 @@ const CheckInDashboard = () => {
     e.preventDefault();
     setSubmitting(true);
 
+    let finalForm = { ...form };
+
+    // If in speech mode, parse the transcript into JSON first
+    if (mode === 'speech' && transcript) {
+      setAiLoading(true);
+      try {
+        const parseRes = await axios.post('http://localhost:5001/api/ai/parse', { transcript });
+        
+        console.log("✨ Auto-filled JSON from LLM API:", parseRes.data);
+        
+        // Merge the AI parsed data with our default form
+        finalForm = { ...form, ...parseRes.data };
+        setForm(finalForm); // Update UI state just in case
+      } catch (parseErr) {
+        console.error('AI Parse Error:', parseErr);
+        alert(t('Could not process your voice input into data. Submitting as empty.'));
+      }
+      setAiLoading(false);
+    }
+
     const checkinPayload = {
-      blood_sugar: parseInt(form.glucose) || null,
+      blood_sugar: parseInt(finalForm.glucose) || null,
       insulin_taken: null,
       medications_taken: null,
-      symptoms: form.hasSymptoms ? form.symptomsText : '',
-      mood: form.mood,
-      systolic: parseInt(form.systolic) || null,
-      diastolic: parseInt(form.diastolic) || null,
-      activity_done: form.hasActivity,
-      activity_details: form.activityDetails || null,
-      notes: form.notes || null,
+      symptoms: finalForm.hasSymptoms ? finalForm.symptomsText : '',
+      mood: finalForm.mood,
+      systolic: parseInt(finalForm.systolic) || null,
+      diastolic: parseInt(finalForm.diastolic) || null,
+      activity_done: finalForm.hasActivity,
+      activity_details: finalForm.activityDetails || null,
+      notes: finalForm.notes || null,
     };
 
     try {
@@ -234,7 +255,9 @@ const CheckInDashboard = () => {
       <main className="ci-main">
         <form onSubmit={handleSubmit} className="ci-form">
 
-          {/* MOOD SECTION */}
+          {mode !== 'speech' && (
+            <>
+              {/* MOOD SECTION */}
           <section className="ci-card">
             <h2 className="ci-card-title">{t("General Wellbeing")}</h2>
             <div className="ci-field">
@@ -260,7 +283,7 @@ const CheckInDashboard = () => {
                   ))}
                 </div>
               ) : (
-                <select name="mood" value={form.mood} onChange={handleChange} required>
+                <select name="mood" value={form.mood} onChange={handleChange} required={mode !== 'speech'}>
                   <option value="" disabled>{t("Select mood...")}</option>
                   {MOODS.map(m => <option key={m} value={m}>{t(m)}</option>)}
                 </select>
@@ -404,24 +427,26 @@ const CheckInDashboard = () => {
                   {isPictureMode && <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>🩸</span>}
                   {t("Blood Glucose (mg/dL)")} <span className="ci-req">*</span>
                 </label>
-                <input name="glucose" type="number" placeholder="100" value={form.glucose} onChange={handleChange} required min="20" max="600" />
+                <input name="glucose" type="number" placeholder="100" value={form.glucose} onChange={handleChange} required={mode !== 'speech'} min="20" max="600" />
               </div>
             </div>
           </section>
 
-          {/* NOTES SECTION */}
-          <section className="ci-card">
-            <h2 className="ci-card-title">{t("Additional Notes")}</h2>
-            <div className="ci-field">
-              <textarea
-                name="notes"
-                value={form.notes}
-                onChange={handleChange}
-                placeholder={t("Any other observations or concerns...")}
-                rows={3}
-              />
-            </div>
-          </section>
+              {/* NOTES SECTION */}
+              <section className="ci-card">
+                <h2 className="ci-card-title">{t("Additional Notes")}</h2>
+                <div className="ci-field">
+                  <textarea
+                    name="notes"
+                    value={form.notes}
+                    onChange={handleChange}
+                    placeholder={t("Any other observations or concerns...")}
+                    rows={3}
+                  />
+                </div>
+              </section>
+            </>
+          )}
 
           {/* MICROPHONE TRANSCRIPT SECTION */}
           {mode === 'speech' && (
