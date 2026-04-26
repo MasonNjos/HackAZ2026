@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useLanguage } from '../../contexts/LanguageContext';
+import LanguageToggle from '../LanguageToggle/LanguageToggle';
 import './Checkin.css';
 
 const MOODS = ['Great', 'Good', 'Okay', 'Not great', 'Poor'];
 
 const CheckInDashboard = () => {
   const { user } = useAuth0();
+  const { t } = useLanguage();
 
   const [form, setForm] = useState({
     mood: '',
@@ -78,10 +81,13 @@ const CheckInDashboard = () => {
       <header className="ci-header">
         <div className="ci-header-inner">
           <div>
-            <h1>Saguaro Link</h1>
-            <p>Daily Health Monitor</p>
+            <h1>{t("Saguaro Link")}</h1>
+            <p>{t("Daily Health Monitor")}</p>
           </div>
-          {user && <span className="ci-welcome">Welcome, {user.given_name || user.name}</span>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <LanguageToggle />
+            {user && <span className="ci-welcome">{t("Welcome")}, {user.given_name || user.name}</span>}
+          </div>
         </div>
       </header>
 
@@ -90,24 +96,24 @@ const CheckInDashboard = () => {
           
           {/* MOOD SECTION */}
           <section className="ci-card">
-            <h2 className="ci-card-title">General Wellbeing</h2>
+            <h2 className="ci-card-title">{t("General Wellbeing")}</h2>
             <div className="ci-field">
-              <label>How are you feeling today?</label>
+              <label>{t("How are you feeling today?")}</label>
               <select name="mood" value={form.mood} onChange={handleChange} required>
-                <option value="" disabled>Select mood...</option>
-                {MOODS.map(m => <option key={m} value={m}>{m}</option>)}
+                <option value="" disabled>{t("Select mood...")}</option>
+                {MOODS.map(m => <option key={m} value={m}>{t(m)}</option>)}
               </select>
             </div>
           </section>
 
           {/* ACTIVITY SECTION */}
           <section className="ci-card">
-            <h2 className="ci-card-title">Daily Activity</h2>
+            <h2 className="ci-card-title">{t("Daily Activity")}</h2>
             <div className="ci-checkbox-group">
               <label className="ci-checkbox-label">
                 <input type="checkbox" name="hasActivity" checked={form.hasActivity} onChange={handleChange} />
                 <span className="ci-checkbox-box" />
-                I was physically active today
+                {t("I was physically active today")}
               </label>
             </div>
             {form.hasActivity && (
@@ -126,12 +132,12 @@ const CheckInDashboard = () => {
 
           {/* SYMPTOMS SECTION (Converted to Text Input) */}
           <section className="ci-card">
-            <h2 className="ci-card-title">Symptoms</h2>
+            <h2 className="ci-card-title">{t("Symptoms")}</h2>
             <div className="ci-checkbox-group">
               <label className="ci-checkbox-label">
                 <input type="checkbox" name="hasSymptoms" checked={form.hasSymptoms} onChange={handleChange} />
                 <span className="ci-checkbox-box" />
-                I am experiencing symptoms today
+                {t("I am experiencing symptoms today")}
               </label>
             </div>
             {form.hasSymptoms && (
@@ -150,7 +156,7 @@ const CheckInDashboard = () => {
 
           {/* VITALS SECTION */}
           <section className="ci-card">
-            <h2 className="ci-card-title">Vitals & Readings</h2>
+            <h2 className="ci-card-title">{t("Vitals & Readings")}</h2>
             <div className="ci-fields">
               <div className="ci-field">
                 <label>Blood Pressure (Systolic / Diastolic)</label>
@@ -168,7 +174,7 @@ const CheckInDashboard = () => {
 
           {/* NOTES SECTION */}
           <section className="ci-card">
-            <h2 className="ci-card-title">Additional Notes</h2>
+            <h2 className="ci-card-title">{t("Additional Notes")}</h2>
             <div className="ci-field">
               <textarea 
                 name="notes" 
@@ -181,7 +187,7 @@ const CheckInDashboard = () => {
           </section>
 
           <button type="submit" className="ci-btn ci-btn--blue" disabled={submitting}>
-            {submitting ? 'Saving Check-In...' : 'Save Daily Check-In'}
+            {submitting ? 'Saving Check-In...' : t("Save Daily Check-In")}
           </button>
 
           {success && <p className="ci-success" style={{ textAlign: 'center' }}>✓ Check-in saved successfully!</p>}
