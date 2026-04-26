@@ -56,7 +56,23 @@ const translations = {
     "Manage appointments, view records, message your care team, and request prescription renewals.": "Manage appointments, view records, message your care team, and request prescription renewals.",
     "Health & Wellness": "Health & Wellness",
     "Explore education, health checks, support groups, and prevention resources from Banner Health.": "Explore education, health checks, support groups, and prevention resources from Banner Health.",
-    "Open Banner Health": "Open Banner Health"
+    "Open Banner Health": "Open Banner Health",
+    "Details": "Details",
+    "(e.g. 30 min walk)": "(e.g. 30 min walk)",
+    "What activity did you do?": "What activity did you do?",
+    "Please describe your symptoms:": "Please describe your symptoms:",
+    "e.g. Mild headache since morning, slight dizziness...": "e.g. Mild headache since morning, slight dizziness...",
+    "Blood Pressure (Systolic / Diastolic)": "Blood Pressure (Systolic / Diastolic)",
+    "Blood Glucose (mg/dL)": "Blood Glucose (mg/dL)",
+    "Any other observations or concerns...": "Any other observations or concerns...",
+    "Saving Check-In...": "Saving Check-In...",
+    "Done": "Done",
+    "✓ Check-in saved successfully!": "✓ Check-in saved successfully!",
+    "Daily Tip": "Daily Tip",
+    "Recording your symptoms in detail helps your care provider understand triggers and patterns in your health.": "Recording your symptoms in detail helps your care provider understand triggers and patterns in your health.",
+    "Please check your inputs.": "Please check your inputs.",
+    "You've already submitted a check-in for today.": "You've already submitted a check-in for today.",
+    "Something went wrong. Please try again.": "Something went wrong. Please try again."
   },
   es: {
     "Saguaro Link": "Saguaro Link",
@@ -111,7 +127,23 @@ const translations = {
     "Manage appointments, view records, message your care team, and request prescription renewals.": "Administra citas, ve registros, envía mensajes a tu equipo de salud y solicita renovaciones de recetas.",
     "Health & Wellness": "Salud y Bienestar",
     "Explore education, health checks, support groups, and prevention resources from Banner Health.": "Explora recursos de educación, chequeos de salud, grupos de apoyo y prevención de Banner Health.",
-    "Open Banner Health": "Abrir Banner Health"
+    "Open Banner Health": "Abrir Banner Health",
+    "Details": "Detalles",
+    "(e.g. 30 min walk)": "(ej. caminata de 30 min)",
+    "What activity did you do?": "¿Qué actividad hiciste?",
+    "Please describe your symptoms:": "Por favor, describe tus síntomas:",
+    "e.g. Mild headache since morning, slight dizziness...": "ej. Dolor de cabeza leve desde la mañana, mareos...",
+    "Blood Pressure (Systolic / Diastolic)": "Presión Arterial (Sistólica / Diastólica)",
+    "Blood Glucose (mg/dL)": "Glucosa en Sangre (mg/dL)",
+    "Any other observations or concerns...": "Cualquier otra observación o inquietud...",
+    "Saving Check-In...": "Guardando Chequeo...",
+    "Done": "Listo",
+    "✓ Check-in saved successfully!": "✓ ¡Chequeo guardado exitosamente!",
+    "Daily Tip": "Consejo Diario",
+    "Recording your symptoms in detail helps your care provider understand triggers and patterns in your health.": "Registrar tus síntomas en detalle ayuda a tu proveedor de salud a comprender los desencadenantes y patrones en tu salud.",
+    "Please check your inputs.": "Por favor, verifica tus datos.",
+    "You've already submitted a check-in for today.": "Ya has enviado un chequeo para hoy.",
+    "Something went wrong. Please try again.": "Algo salió mal. Por favor intenta de nuevo."
   }
 };
 
