@@ -32,7 +32,7 @@ const RequestRide = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await axios.post('http://localhost:5000/api/rides', {
+      await axios.post('/api/rides', {
         pickup: form.pickup,
         destination: form.destination,
         date: form.date,
