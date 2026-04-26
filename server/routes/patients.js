@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
     // Insert a new patient row each time (no mock user_id conflict)
     const result = await pool.query(
       `INSERT INTO patients 
-        (user_id, name, sex, height_in, weight_lbs, date_of_birth, diseases, tobacco_vaping, drinking_times_per_week)
+        (user_id, name, sex, height_in, weight_lbs, date_of_birth, diseases, tobacco_vaping_times_per_week, drinking_times_per_week)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
        RETURNING *`,
       [
@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
         weight_lbs,
         date_of_birth,
         diseases,
-        tobacco_vaping_times_per_week > 0, // convert to boolean for the DB column
+        tobacco_vaping_times_per_week,
         drinking_times_per_week,
       ]
     );
