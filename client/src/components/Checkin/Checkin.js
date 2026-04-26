@@ -95,12 +95,12 @@ const CheckInDashboard = () => {
 
   // ElevenLabs API Integration Placeholder
   const speakTextWithElevenLabs = async (text) => {
-    // TODO: Insert your ElevenLabs API Key here
+    // We keep ElevenLabs on the frontend as requested
     const ELEVEN_LABS_API_KEY = process.env.REACT_APP_ELEVEN_LABS_API_KEY || 'YOUR_ELEVEN_LABS_API_KEY_HERE';
-    const VOICE_ID = '21m00Tcm4TlvDq8ikWAM'; // Example Voice ID (Rachel)
+    const VOICE_ID = '21m00Tcm4TlvDq8ikWAM';
 
     if (!ELEVEN_LABS_API_KEY || ELEVEN_LABS_API_KEY === 'YOUR_ELEVEN_LABS_API_KEY_HERE') {
-      alert(t("Please configure your ElevenLabs API Key in the code first."));
+      alert(t("Please configure your ElevenLabs API Key in the client code or .env first."));
       return;
     }
 
@@ -113,17 +113,17 @@ const CheckInDashboard = () => {
         },
         body: JSON.stringify({
           text: text,
-          model_id: 'eleven_turbo_v2', // Extremely stable fast model
+          model_id: 'eleven_turbo_v2',
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.5,
-            speed: 0.8 // Slower speed (Range: 0.7 to 1.2)
+            speed: 0.8
           }
         })
       });
 
       if (!response.ok) {
-        throw new Error(`ElevenLabs API returned ${response.status}: ${response.statusText}`);
+        throw new Error('Failed to generate speech with ElevenLabs');
       }
 
       const blob = await response.blob();
@@ -186,9 +186,21 @@ const CheckInDashboard = () => {
         // Merge the AI parsed data with our default form
         finalForm = { ...form, ...parseRes.data };
         setForm(finalForm); // Update UI state just in case
+
+        // SAFETY CHECK: Ensure blood sugar (glucose) was actually found
+        if (!finalForm.glucose || finalForm.glucose === "" || isNaN(parseInt(finalForm.glucose))) {
+          alert(t("I couldn't quite catch your blood sugar reading. Could you please say it again? (e.g., 'My sugar is 105')"));
+          setAiLoading(false);
+          setSubmitting(false);
+          return; // Stop here so we don't get a database error
+        }
+
       } catch (parseErr) {
         console.error('AI Parse Error:', parseErr);
-        alert(t('Could not process your voice input into data. Submitting as empty.'));
+        alert(t('Could not process your voice input into data. Please try speaking clearly or enter manually.'));
+        setAiLoading(false);
+        setSubmitting(false);
+        return;
       }
       setAiLoading(false);
     }
@@ -216,7 +228,10 @@ const CheckInDashboard = () => {
       setAiLoading(true);
       try {
         const aiPayload = { ...checkinPayload, transcript };
-        const aiRes = await axios.post('http://localhost:5001/api/ai/analyze', aiPayload);
+        // Split the calls: one for voice mode, one for others
+        const endpoint = mode === 'speech' ? 'analyze-voice' : 'analyze-manual';
+        const aiRes = await axios.post(`http://localhost:5001/api/ai/${endpoint}`, aiPayload);
+
         setAiInsight(aiRes.data.insight);
       } catch (aiErr) {
         console.error('AI Analysis Error:', aiErr);
@@ -258,179 +273,179 @@ const CheckInDashboard = () => {
           {mode !== 'speech' && (
             <>
               {/* MOOD SECTION */}
-          <section className="ci-card">
-            <h2 className="ci-card-title">{t("General Wellbeing")}</h2>
-            <div className="ci-field">
-              <label>{t("How are you feeling today?")}</label>
-              {isPictureMode ? (
-                <div className="ci-mood-emojis">
-                  {[
-                    { label: 'Great', emoji: '😁' },
-                    { label: 'Good', emoji: '🙂' },
-                    { label: 'Okay', emoji: '😐' },
-                    { label: 'Not great', emoji: '🙁' },
-                    { label: 'Poor', emoji: '🤒' }
-                  ].map(m => (
+              <section className="ci-card">
+                <h2 className="ci-card-title">{t("General Wellbeing")}</h2>
+                <div className="ci-field">
+                  <label>{t("How are you feeling today?")}</label>
+                  {isPictureMode ? (
+                    <div className="ci-mood-emojis">
+                      {[
+                        { label: 'Great', emoji: '😁' },
+                        { label: 'Good', emoji: '🙂' },
+                        { label: 'Okay', emoji: '😐' },
+                        { label: 'Not great', emoji: '🙁' },
+                        { label: 'Poor', emoji: '🤒' }
+                      ].map(m => (
+                        <button
+                          type="button"
+                          key={m.label}
+                          className={`ci-emoji-btn ${form.mood === m.label ? 'selected' : ''}`}
+                          onClick={() => setForm(prev => ({ ...prev, mood: m.label }))}
+                          title={t(m.label)}
+                        >
+                          {m.emoji}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <select name="mood" value={form.mood} onChange={handleChange} required={mode !== 'speech'}>
+                      <option value="" disabled>{t("Select mood...")}</option>
+                      {MOODS.map(m => <option key={m} value={m}>{t(m)}</option>)}
+                    </select>
+                  )}
+                </div>
+              </section>
+
+              {/* ACTIVITY SECTION */}
+              <section className="ci-card">
+                <h2 className="ci-card-title">{t("Daily Activity")}</h2>
+                {isPictureMode ? (
+                  <div className="ci-picture-grid">
+                    {[
+                      { label: 'Walking', emoji: '🚶‍♂️' },
+                      { label: 'Chores', emoji: '🧹' },
+                      { label: 'Biking', emoji: '🚲' },
+                      { label: 'Resting', emoji: '🛌' }
+                    ].map(act => (
+                      <button
+                        type="button"
+                        key={act.label}
+                        className={`ci-pic-btn ${form.hasActivity && form.activityDetails === act.label ? 'selected' : ''}`}
+                        onClick={() => setForm(prev => ({ ...prev, hasActivity: true, activityDetails: act.label }))}
+                      >
+                        <span className="ci-pic-emoji">{act.emoji}</span>
+                        <span className="ci-pic-label">{t(act.label)}</span>
+                      </button>
+                    ))}
                     <button
                       type="button"
-                      key={m.label}
-                      className={`ci-emoji-btn ${form.mood === m.label ? 'selected' : ''}`}
-                      onClick={() => setForm(prev => ({ ...prev, mood: m.label }))}
-                      title={t(m.label)}
+                      className={`ci-pic-btn ${!form.hasActivity ? 'selected' : ''}`}
+                      onClick={() => setForm(prev => ({ ...prev, hasActivity: false, activityDetails: '' }))}
                     >
-                      {m.emoji}
+                      <span className="ci-pic-emoji">❌</span>
+                      <span className="ci-pic-label">{t("None")}</span>
                     </button>
-                  ))}
-                </div>
-              ) : (
-                <select name="mood" value={form.mood} onChange={handleChange} required={mode !== 'speech'}>
-                  <option value="" disabled>{t("Select mood...")}</option>
-                  {MOODS.map(m => <option key={m} value={m}>{t(m)}</option>)}
-                </select>
-              )}
-            </div>
-          </section>
-
-          {/* ACTIVITY SECTION */}
-          <section className="ci-card">
-            <h2 className="ci-card-title">{t("Daily Activity")}</h2>
-            {isPictureMode ? (
-              <div className="ci-picture-grid">
-                {[
-                  { label: 'Walking', emoji: '🚶‍♂️' },
-                  { label: 'Chores', emoji: '🧹' },
-                  { label: 'Biking', emoji: '🚲' },
-                  { label: 'Resting', emoji: '🛌' }
-                ].map(act => (
-                  <button
-                    type="button"
-                    key={act.label}
-                    className={`ci-pic-btn ${form.hasActivity && form.activityDetails === act.label ? 'selected' : ''}`}
-                    onClick={() => setForm(prev => ({ ...prev, hasActivity: true, activityDetails: act.label }))}
-                  >
-                    <span className="ci-pic-emoji">{act.emoji}</span>
-                    <span className="ci-pic-label">{t(act.label)}</span>
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  className={`ci-pic-btn ${!form.hasActivity ? 'selected' : ''}`}
-                  onClick={() => setForm(prev => ({ ...prev, hasActivity: false, activityDetails: '' }))}
-                >
-                  <span className="ci-pic-emoji">❌</span>
-                  <span className="ci-pic-label">{t("None")}</span>
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="ci-checkbox-group">
-                  <label className="ci-checkbox-label">
-                    <input type="checkbox" name="hasActivity" checked={form.hasActivity} onChange={handleChange} />
-                    <span className="ci-checkbox-box" />
-                    {t("I was physically active today")}
-                  </label>
-                </div>
-                {form.hasActivity && (
-                  <div className="ci-field" style={{ marginTop: '1rem' }}>
-                    <label>{t("Details")} <span className="ci-optional">{t("(e.g. 30 min walk)")}</span></label>
-                    <input
-                      type="text"
-                      name="activityDetails"
-                      value={form.activityDetails}
-                      onChange={handleChange}
-                      placeholder={t("What activity did you do?")}
-                    />
                   </div>
+                ) : (
+                  <>
+                    <div className="ci-checkbox-group">
+                      <label className="ci-checkbox-label">
+                        <input type="checkbox" name="hasActivity" checked={form.hasActivity} onChange={handleChange} />
+                        <span className="ci-checkbox-box" />
+                        {t("I was physically active today")}
+                      </label>
+                    </div>
+                    {form.hasActivity && (
+                      <div className="ci-field" style={{ marginTop: '1rem' }}>
+                        <label>{t("Details")} <span className="ci-optional">{t("(e.g. 30 min walk)")}</span></label>
+                        <input
+                          type="text"
+                          name="activityDetails"
+                          value={form.activityDetails}
+                          onChange={handleChange}
+                          placeholder={t("What activity did you do?")}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          </section>
+              </section>
 
-          {/* SYMPTOMS SECTION */}
-          <section className="ci-card">
-            <h2 className="ci-card-title">{t("Symptoms")}</h2>
-            {isPictureMode ? (
-              <div className="ci-picture-grid">
-                {[
-                  { label: 'Headache', emoji: '🤕' },
-                  { label: 'Nausea', emoji: '🤢' },
-                  { label: 'Chest Pain', emoji: '🫀' },
-                  { label: 'Muscle Aches', emoji: '🦵' },
-                  { label: 'Cough', emoji: '🤧' }
-                ].map(sym => (
-                  <button
-                    type="button"
-                    key={sym.label}
-                    className={`ci-pic-btn ${form.hasSymptoms && form.symptomsText.includes(sym.label) ? 'selected' : ''}`}
-                    onClick={() => {
-                      setForm(prev => {
-                        let newSymptoms = prev.symptomsText ? prev.symptomsText.split(', ').filter(Boolean) : [];
-                        if (newSymptoms.includes(sym.label)) {
-                          newSymptoms = newSymptoms.filter(s => s !== sym.label);
-                        } else {
-                          newSymptoms.push(sym.label);
-                        }
-                        return {
-                          ...prev,
-                          hasSymptoms: newSymptoms.length > 0,
-                          symptomsText: newSymptoms.join(', ')
-                        };
-                      });
-                    }}
-                  >
-                    <span className="ci-pic-emoji">{sym.emoji}</span>
-                    <span className="ci-pic-label">{t(sym.label)}</span>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <>
-                <div className="ci-checkbox-group">
-                  <label className="ci-checkbox-label">
-                    <input type="checkbox" name="hasSymptoms" checked={form.hasSymptoms} onChange={handleChange} />
-                    <span className="ci-checkbox-box" />
-                    {t("I am experiencing symptoms today")}
-                  </label>
-                </div>
-                {form.hasSymptoms && (
-                  <div className="ci-field" style={{ marginTop: '1rem' }}>
-                    <label>{t("Please describe your symptoms:")}</label>
-                    <textarea
-                      name="symptomsText"
-                      value={form.symptomsText}
-                      onChange={handleChange}
-                      placeholder={t("e.g. Mild headache since morning, slight dizziness...")}
-                      rows={3}
-                    />
+              {/* SYMPTOMS SECTION */}
+              <section className="ci-card">
+                <h2 className="ci-card-title">{t("Symptoms")}</h2>
+                {isPictureMode ? (
+                  <div className="ci-picture-grid">
+                    {[
+                      { label: 'Headache', emoji: '🤕' },
+                      { label: 'Nausea', emoji: '🤢' },
+                      { label: 'Chest Pain', emoji: '🫀' },
+                      { label: 'Muscle Aches', emoji: '🦵' },
+                      { label: 'Cough', emoji: '🤧' }
+                    ].map(sym => (
+                      <button
+                        type="button"
+                        key={sym.label}
+                        className={`ci-pic-btn ${form.hasSymptoms && form.symptomsText.includes(sym.label) ? 'selected' : ''}`}
+                        onClick={() => {
+                          setForm(prev => {
+                            let newSymptoms = prev.symptomsText ? prev.symptomsText.split(', ').filter(Boolean) : [];
+                            if (newSymptoms.includes(sym.label)) {
+                              newSymptoms = newSymptoms.filter(s => s !== sym.label);
+                            } else {
+                              newSymptoms.push(sym.label);
+                            }
+                            return {
+                              ...prev,
+                              hasSymptoms: newSymptoms.length > 0,
+                              symptomsText: newSymptoms.join(', ')
+                            };
+                          });
+                        }}
+                      >
+                        <span className="ci-pic-emoji">{sym.emoji}</span>
+                        <span className="ci-pic-label">{t(sym.label)}</span>
+                      </button>
+                    ))}
                   </div>
+                ) : (
+                  <>
+                    <div className="ci-checkbox-group">
+                      <label className="ci-checkbox-label">
+                        <input type="checkbox" name="hasSymptoms" checked={form.hasSymptoms} onChange={handleChange} />
+                        <span className="ci-checkbox-box" />
+                        {t("I am experiencing symptoms today")}
+                      </label>
+                    </div>
+                    {form.hasSymptoms && (
+                      <div className="ci-field" style={{ marginTop: '1rem' }}>
+                        <label>{t("Please describe your symptoms:")}</label>
+                        <textarea
+                          name="symptomsText"
+                          value={form.symptomsText}
+                          onChange={handleChange}
+                          placeholder={t("e.g. Mild headache since morning, slight dizziness...")}
+                          rows={3}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          </section>
+              </section>
 
-          {/* VITALS SECTION */}
-          <section className="ci-card">
-            <h2 className="ci-card-title">{t("Vitals & Readings")}</h2>
-            <div className="ci-fields">
-              <div className="ci-field">
-                <label>
-                  {isPictureMode && <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>💓</span>}
-                  {t("Blood Pressure (Systolic / Diastolic)")}
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <input name="systolic" type="number" placeholder="120" value={form.systolic} onChange={handleChange} />
-                  <input name="diastolic" type="number" placeholder="80" value={form.diastolic} onChange={handleChange} />
+              {/* VITALS SECTION */}
+              <section className="ci-card">
+                <h2 className="ci-card-title">{t("Vitals & Readings")}</h2>
+                <div className="ci-fields">
+                  <div className="ci-field">
+                    <label>
+                      {isPictureMode && <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>💓</span>}
+                      {t("Blood Pressure (Systolic / Diastolic)")}
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      <input name="systolic" type="number" placeholder="120" value={form.systolic} onChange={handleChange} />
+                      <input name="diastolic" type="number" placeholder="80" value={form.diastolic} onChange={handleChange} />
+                    </div>
+                  </div>
+                  <div className="ci-field" style={{ marginTop: '1rem' }}>
+                    <label>
+                      {isPictureMode && <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>🩸</span>}
+                      {t("Blood Glucose (mg/dL)")} <span className="ci-req">*</span>
+                    </label>
+                    <input name="glucose" type="number" placeholder="100" value={form.glucose} onChange={handleChange} required={mode !== 'speech'} min="20" max="600" />
+                  </div>
                 </div>
-              </div>
-              <div className="ci-field" style={{ marginTop: '1rem' }}>
-                <label>
-                  {isPictureMode && <span style={{ fontSize: '1.5rem', marginRight: '0.5rem' }}>🩸</span>}
-                  {t("Blood Glucose (mg/dL)")} <span className="ci-req">*</span>
-                </label>
-                <input name="glucose" type="number" placeholder="100" value={form.glucose} onChange={handleChange} required={mode !== 'speech'} min="20" max="600" />
-              </div>
-            </div>
-          </section>
+              </section>
 
               {/* NOTES SECTION */}
               <section className="ci-card">
