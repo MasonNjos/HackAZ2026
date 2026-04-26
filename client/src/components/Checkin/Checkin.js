@@ -206,7 +206,7 @@ const CheckInDashboard = () => {
       setAiLoading(true);
       try {
         const aiPayload = { ...checkinPayload, transcript };
-        const aiRes = await axios.post('http://localhost:5001/api/ai/analyze', aiPayload);
+        const aiRes = await axios.post('/api/ai/analyze', aiPayload);
         setAiInsight(aiRes.data.insight);
       } catch (aiErr) {
         console.error('AI Analysis Error:', aiErr);

@@ -161,6 +161,7 @@ app.use('/api/insights', require('./routes/insights'));
 app.use('/api/patients', require('./routes/patients'));
 app.use('/api/rides', require('./routes/rides'));
 app.use('/api/doctor', require('./routes/doctor'));
+app.use('/api/ai', require('./routes/ai'));
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
