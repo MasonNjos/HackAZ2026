@@ -71,13 +71,28 @@ router.post('/', async (req, res) => {
              req.body.notes || null]
           );
 
-        // Award credits
+        // Update streak logic
+        const streakResult = await pool.query(`
+          UPDATE users SET 
+            streak = CASE 
+              WHEN last_checkin_date = CURRENT_DATE - INTERVAL '1 day' THEN streak + 1 
+              WHEN last_checkin_date = CURRENT_DATE THEN streak 
+              ELSE 1 
+            END, 
+            last_checkin_date = CURRENT_DATE 
+          WHERE id = $1 RETURNING streak, last_checkin_date;
+        `, [userId]);
+
+        const updatedStreak = streakResult.rows[0]?.streak || 1;
+
+        // Award credits (10 base + 5 for streak > 3)
+        const creditAmount = updatedStreak >= 3 ? 15 : 10;
         await pool.query(
             'INSERT INTO credits_ledger (user_id, transaction_type, amount, description) VALUES ($1, $2, $3, $4)',
-            [userId, 'earned', 10, 'Daily check-in completed']
+            [userId, 'earned', creditAmount, `Daily check-in completed (Streak: ${updatedStreak})`]
         );
 
-        res.json({ checkin: result.rows[0], awarded_credits: 10 });
+        res.json({ checkin: result.rows[0], awarded_credits: creditAmount, streak: updatedStreak });
     } catch (err) {
         if (err && err.code === '23505') {
             return res.status(409).json({

@@ -31,8 +31,17 @@ const initDb = async () => {
           auth0_id VARCHAR(255) UNIQUE NOT NULL,
           email VARCHAR(255) UNIQUE,
           name VARCHAR(255),
+          streak INTEGER DEFAULT 0,
+          last_checkin_date DATE,
+          banner_bucks INTEGER DEFAULT 0,
+          grocery_credit INTEGER DEFAULT 0,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS streak INTEGER DEFAULT 0;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS last_checkin_date DATE;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS banner_bucks INTEGER DEFAULT 0;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS grocery_credit INTEGER DEFAULT 0;
 
       -- Daily check-ins table
       CREATE TABLE IF NOT EXISTS daily_checkins (

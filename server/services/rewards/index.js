@@ -45,6 +45,13 @@ async function redeemCredits({ userId, cost, rewardType }) {
     status: 'issued',
   };
 
+  // Add points to user balances
+  if (rewardType === 'Banner Bucks') {
+    await pool.query('UPDATE users SET banner_bucks = banner_bucks + $1 WHERE id = $2', [Math.trunc(c), userId]);
+  } else if (rewardType === 'Groceries Credit') {
+    await pool.query('UPDATE users SET grocery_credit = grocery_credit + $1 WHERE id = $2', [Math.trunc(c), userId]);
+  }
+
   return { ledgerEntry: result.rows[0], voucher, balance_after: balance - c };
 }
 

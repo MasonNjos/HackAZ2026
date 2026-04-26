@@ -10,6 +10,7 @@ const Dashboard = () => {
   const { loginWithRedirect, logout, user, isAuthenticated, isLoading } = useAuth0();
   const [localUser, setLocalUser] = useState(null);
   const [rides, setRides] = useState([]);
+  const [rewardsData, setRewardsData] = useState(null);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -21,9 +22,13 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isAuthenticated || localUser) {
-      axios.get('http://localhost:5000/api/rides')
+      axios.get('http://localhost:5001/api/rides')
         .then(res => setRides(res.data))
         .catch(err => console.error('Error fetching rides:', err));
+        
+      axios.get('http://localhost:5001/api/credits/balance')
+        .then(res => setRewardsData(res.data))
+        .catch(err => console.error('Error fetching rewards:', err));
     }
   }, [isAuthenticated, localUser]);
 
@@ -50,7 +55,11 @@ const Dashboard = () => {
               </button>
             </div>
           ) : (
-            <div className="user-actions">
+              <div className="user-actions">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginRight: '1rem', background: '#f5f5f5', padding: '0.5rem 1rem', borderRadius: '8px' }}>
+                  <span style={{ fontWeight: 'bold', color: '#ff7b00' }}>🔥 {rewardsData?.streak || 0} {t("Days")}</span>
+                  <span style={{ fontWeight: 'bold', color: '#fbbc05' }}>⭐ {rewardsData?.balance || 0}</span>
+                </div>
               <LanguageToggle />
               <p className="welcome-text">{t("Welcome")}, {user?.given_name || user?.name || localUser?.email}!</p>
               <button
@@ -117,6 +126,14 @@ const Dashboard = () => {
               <h3>{t("Request a Ride")}</h3>
               <p>{t("Schedule or request transportation to your upcoming appointments.")}</p>
               <Link to="/ride" className="btn-primary">{t("Get a Ride")}</Link>
+            </div>
+
+            {/* CARD 5: INCENTIVES / REWARDS */}
+            <div className="section-card">
+              <div className="card-icon card-icon--orange">🎁</div>
+              <h3>{t("Rewards & Streak")}</h3>
+              <p>{t("Check your daily streak, earn points, and redeem them for rewards.")}</p>
+              <Link to="/rewards" className="btn-primary">{t("View Rewards")}</Link>
             </div>
 
           </section>

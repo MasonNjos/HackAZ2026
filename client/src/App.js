@@ -12,6 +12,7 @@ import Login from './components/Login';
 import DoctorChat from './components/DoctorChat/DoctorChat'; // <── NEW IMPORT
 import RequestRide from './components/RequestRide/RequestRide';
 import History from './components/History/History'; // <── NEW IMPORT
+import Rewards from './components/Rewards/Rewards';
 import { LanguageProvider } from './contexts/LanguageContext';
 
 // ─── THE GATEKEEPER ───
@@ -78,6 +79,7 @@ function App() {
               <Route path="/chat" element={<AuthGate><DoctorChat /></AuthGate>} />
               <Route path="/ride" element={<AuthGate><RequestRide /></AuthGate>} />
               <Route path="/history" element={<AuthGate><History /></AuthGate>} />
+              <Route path="/rewards" element={<AuthGate><Rewards /></AuthGate>} />
             </Routes>
           </div>
         </Auth0ProviderWithNavigate>

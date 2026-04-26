@@ -23,8 +23,18 @@ router.get('/balance', async (req, res) => {
       'SELECT COALESCE(SUM(amount), 0) AS balance FROM credits_ledger WHERE user_id = $1',
       [userId]
     );
+    const userRes = await pool.query(
+      'SELECT streak, banner_bucks, grocery_credit FROM users WHERE id = $1',
+      [userId]
+    );
     const balance = Number(result.rows?.[0]?.balance ?? 0);
-    res.json({ balance });
+    const user = userRes.rows?.[0] || {};
+    res.json({ 
+      balance,
+      streak: user.streak || 0,
+      banner_bucks: user.banner_bucks || 0,
+      grocery_credit: user.grocery_credit || 0
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: { message: 'Server error' } });
